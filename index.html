@@ -98,14 +98,89 @@
             padding: 15px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         .info h3 {
             color: #667eea;
-            margin-bottom: 8px;
+            margin-bottom: 0;
             font-size: 0.9em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .select-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .select-btn {
+            padding: 6px 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            background: white;
+            color: #667eea;
+            border: 1px solid #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .select-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .select-btn:active {
+            transform: translateY(0);
+        }
+
+        .museum-checkboxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            column-gap: 20px;
+        }
+
+        .museum-checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .museum-checkbox-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .museum-checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .museum-checkbox-item label {
+            font-size: 0.9em;
+            color: #555;
+            cursor: pointer;
+            flex: 1;
         }
 
         .museum-list {
@@ -151,6 +226,10 @@
             .museum-list {
                 columns: 1;
             }
+
+            .museum-checkboxes {
+                grid-template-columns: 1fr;
+            }
         }
 
         .status {
@@ -178,29 +257,7 @@
 <body>
     <div class="container">
         <h1>🎨 Museum Search Portal</h1>
-        <p class="subtitle">Search across 15+ major art museums worldwide</p>
-
-        <div class="info">
-            <h3>Museums Included</h3>
-            <ul class="museum-list">
-                <li>Art Institute of Chicago</li>
-                <li>Newfields Museum</li>
-                <li>Cleveland Museum of Art</li>
-                <li>Gallerix.org</li>
-                <li>Yale University Art Gallery</li>
-                <li>Walters Art Museum</li>
-                <li>Smithsonian (3 collections)</li>
-                <li>National Gallery of Art</li>
-                <li>Metropolitan Museum</li>
-                <li>LACMA</li>
-                <li>Paris Museums (2 collections)</li>
-                <li>Te Papa Museum</li>
-                <li>Rijksmuseum (4 collections)</li>
-                <li>Getty Museum</li>
-                <li>Museo del Prado (2 collections)</li>
-                <li>Yale British Art Center</li>
-            </ul>
-        </div>
+        <p class="subtitle">Search across 25+ major art museums worldwide</p>
 
         <div class="search-box">
             <input 
@@ -209,47 +266,142 @@
                 placeholder="Enter search term (e.g., landscape, portrait, monet...)" 
                 value="miner"
             />
-            <button id="searchButton">Search All</button>
+            <button id="searchButton">Search Selected</button>
         </div>
 
         <div id="status" class="status"></div>
 
+        <div class="info">
+            <div class="info-header">
+                <h3>Select Museums to Search</h3>
+                <div class="select-buttons">
+                    <button id="selectAllBtn" class="select-btn">Select All</button>
+                    <button id="selectNoneBtn" class="select-btn">Select None</button>
+                </div>
+            </div>
+            <div class="museum-checkboxes" id="museumCheckboxes">
+                <!-- Checkboxes will be dynamically generated here -->
+            </div>
+        </div>
+
         <div class="footer">
-            Opens 24 tabs • Allow pop-ups if prompted
+            <span id="tabCount">25 tabs selected</span> • Allow pop-ups if prompted
         </div>
     </div>
 
     <script>
         const museums = [
-            'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting&is_public_domain=1',
-            'https://collections.discovernewfields.org/search?showOnly=is_public_domain&object_types.keyword=paintings&searchTerm=SEARCH&section=artworks',
-            'https://www.clevelandart.org/art/collection/search?search=SEARCH&limit_by=&cc0=1',
-            'https://www.google.com/search?q=intitle%3ASEARCH+site%3Ahttps%3A%2F%2Fgallerix.org&tbm=isch',
-            'https://artgallery.yale.edu/collection?query=SEARCH&f%5B0%5D=classification%3APaintings&f%5B1%5D=image_availability%3A1&f%5B2%5D=open_access%3A1&page=2',
-            'https://art.thewalters.org/search/?era-to=bce&era-from=bce&q=SEARCH&q-scope=everything&medium%5B%5D=17',
-            'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Drawings%22',
-            'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Paintings%22',
-            'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type%3A%22Graphic+arts%22',
-            'https://www.nga.gov/artwork-search?keywords=SEARCH&download=1&f[]=awtype:107231&f[]=awtype:105956',
-            'https://www.metmuseum.org/art/collection/search?q=SEARCH&offset=0&searchField=Title&material=Paintings&showOnly=openAccess',
-            'https://collections.lacma.org/search/site/SEARCH?f%5B0%5D=bm_field_has_image%3Atrue&f%5B1%5D=im_field_classification%3A22',
-            'https://www.parismuseescollections.paris.fr/fr/denomination/peinture?keywords=SEARCH&limit=300&sort=score',
-            'https://www.parismuseescollections.paris.fr/fr/recherche/denominations/arts%20graphiques-166293/image-libre/1?keywords=SEARCH&limit=300&sort=score',
-            'https://collections.tepapa.govt.nz/search/SEARCH/results?wi=false&wdi=true&q=SEARCH&page=1&t=null&ir=Unrestricted&c=RareBooks',
-            'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=a8ea7a0fd82263755305737ecfad87b4&facets[0].nodeRelationType=HasObjectType',
-            'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Relevance&facets[0].id=a9f849002285adbd26678e361050083c&facets[0].nodeRelationType=HasObjectType',
-            'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=3159edbfc6b22de59dfb2522fecc2706&facets[0].nodeRelationType=HasObjectType',
-            'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity',
-            'https://search.getty.edu/gateway/search?q=SEARCH&cat=type&f=%22Drawings%22&types=%22Paintings%22&highlights=%22Open%20Content%20Images%22&rows=50&srt=&dir=s&dsp=0&img=1&pg=1',
-            'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH&cidoc:p2_has_type@@@pm:objectTypeNode=http://museodelprado.es/items/objecttype_20',
-            'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH&cidoc:p2_has_type@@@pm:objectTypeNode=http://museodelprado.es/items/objecttype_6',
-            'https://collections.britishart.yale.edu/?search_field=simple_search&doc-types=objects&q=SEARCH'
+            { name: 'Art Institute of Chicago - Paintings', url: 'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting&is_public_domain=1', icon: '🖼️' },
+            { name: 'Cleveland Museum of Art', url: 'https://www.clevelandart.org/art/collection/search?search=SEARCH&limit_by=&cc0=1', icon: '🎨' },
+            { name: 'Europeana - 3D', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%223D%22&query=SEARCH%20&reusability=open&view=grid', icon: '🗿' },
+            { name: 'Europeana - Images', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%22IMAGE%22&query=SEARCH%20&reusability=open&view=grid', icon: '📷' },
+            { name: 'Gallerix.org (Google Images)', url: 'https://www.google.com/search?q=intitle%3ASEARCH+site%3Ahttps%3A%2F%2Fgallerix.org&tbm=isch', icon: '🔍' },
+            { name: 'Getty Museum', url: 'https://search.getty.edu/gateway/search?q=SEARCH&cat=type&f=%22Drawings%22&types=%22Paintings%22&highlights=%22Open%20Content%20Images%22&rows=50&srt=&dir=s&dsp=0&img=1&pg=1', icon: '🎨' },
+            { name: 'LACMA', url: 'https://collections.lacma.org/search/site/SEARCH?f%5B0%5D=bm_field_has_image%3Atrue&f%5B1%5D=im_field_classification%3A22', icon: '🎨' },
+            { name: 'Metropolitan Museum - Paintings', url: 'https://www.metmuseum.org/art/collection/search?q=SEARCH&offset=0&searchField=Title&material=Paintings&showOnly=openAccess', icon: '🖼️' },
+            { name: 'Museo del Prado - Drawings', url: 'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH&cidoc:p2_has_type@@@pm:objectTypeNode=http://museodelprado.es/items/objecttype_6', icon: '✏️' },
+            { name: 'Museo del Prado - Paintings', url: 'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH&cidoc:p2_has_type@@@pm:objectTypeNode=http://museodelprado.es/items/objecttype_20', icon: '🖼️' },
+            { name: 'National Gallery of Art', url: 'https://www.nga.gov/artwork-search?keywords=SEARCH&download=1&f[]=awtype:107231&f[]=awtype:105956', icon: '🎨' },
+            { name: 'Newfields Museum - Paintings', url: 'https://collections.discovernewfields.org/search?showOnly=is_public_domain&object_types.keyword=paintings&searchTerm=SEARCH&section=artworks', icon: '🖼️' },
+            { name: 'Paris Museums - Graphic Arts', url: 'https://www.parismuseescollections.paris.fr/fr/recherche/denominations/arts%20graphiques-166293/image-libre/1?keywords=SEARCH&limit=300&sort=score', icon: '🖨️' },
+            { name: 'Paris Museums - Paintings', url: 'https://www.parismuseescollections.paris.fr/fr/denomination/peinture?keywords=SEARCH&limit=300&sort=score', icon: '🖼️' },
+            { name: 'Rijksmuseum - All Art', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity', icon: '🎨' },
+            { name: 'Rijksmuseum - Drawings', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Relevance&facets[0].id=a9f849002285adbd26678e361050083c&facets[0].nodeRelationType=HasObjectType', icon: '✏️' },
+            { name: 'Rijksmuseum - Paintings', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=a8ea7a0fd82263755305737ecfad87b4&facets[0].nodeRelationType=HasObjectType', icon: '🖼️' },
+            { name: 'Rijksmuseum - Prints', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=3159edbfc6b22de59dfb2522fecc2706&facets[0].nodeRelationType=HasObjectType', icon: '🖨️' },
+            { name: 'Smithsonian - Drawings', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Drawings%22', icon: '✏️' },
+            { name: 'Smithsonian - Graphic Arts', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type%3A%22Graphic+arts%22', icon: '🖨️' },
+            { name: 'Smithsonian - Paintings', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Paintings%22', icon: '🖼️' },
+            { name: 'Te Papa Museum', url: 'https://collections.tepapa.govt.nz/search/SEARCH/results?wi=false&wdi=true&q=SEARCH&page=1&t=null&ir=Unrestricted&c=RareBooks', icon: '📚' },
+            { name: 'Walters Art Museum', url: 'https://art.thewalters.org/search/?era-to=bce&era-from=bce&q=SEARCH&q-scope=everything&medium%5B%5D=17', icon: '🎨' },
+            { name: 'Yale British Art Center', url: 'https://collections.britishart.yale.edu/?search_field=simple_search&doc-types=objects&q=SEARCH', icon: '🎨' },
+            { name: 'Yale University Art Gallery - Paintings', url: 'https://artgallery.yale.edu/collection?query=SEARCH&f%5B0%5D=classification%3APaintings&f%5B1%5D=image_availability%3A1&f%5B2%5D=open_access%3A1&page=2', icon: '🖼️' }
         ];
 
         const STORAGE_KEY = 'museumSearchTerm';
+        const SELECTED_KEY = 'museumSelectedURLs';
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
         const statusDiv = document.getElementById('status');
+        const checkboxContainer = document.getElementById('museumCheckboxes');
+        const tabCountSpan = document.getElementById('tabCount');
+
+        // Generate checkboxes
+        function generateCheckboxes() {
+            museums.forEach((museum, index) => {
+                const div = document.createElement('div');
+                div.className = 'museum-checkbox-item';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `museum-${index}`;
+                checkbox.checked = true; // All checked by default
+                checkbox.addEventListener('change', updateTabCount);
+                
+                const label = document.createElement('label');
+                label.htmlFor = `museum-${index}`;
+                label.innerHTML = `${museum.icon} ${museum.name}`;
+                
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                checkboxContainer.appendChild(div);
+            });
+            
+            // Load saved selections
+            loadSelectedMuseums();
+            updateTabCount();
+        }
+
+        // Update tab count display
+        function updateTabCount() {
+            const selectedCount = getSelectedMuseums().length;
+            tabCountSpan.textContent = `${selectedCount} tab${selectedCount !== 1 ? 's' : ''} selected`;
+            
+            // Save selections
+            saveSelectedMuseums();
+        }
+
+        // Get selected museums
+        function getSelectedMuseums() {
+            const selected = [];
+            museums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-${index}`);
+                if (checkbox && checkbox.checked) {
+                    selected.push(museum);
+                }
+            });
+            return selected;
+        }
+
+        // Save selected museums to localStorage
+        function saveSelectedMuseums() {
+            const selectedIndices = [];
+            museums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-${index}`);
+                if (checkbox && checkbox.checked) {
+                    selectedIndices.push(index);
+                }
+            });
+            localStorage.setItem(SELECTED_KEY, JSON.stringify(selectedIndices));
+        }
+
+        // Load selected museums from localStorage
+        function loadSelectedMuseums() {
+            const saved = localStorage.getItem(SELECTED_KEY);
+            if (saved) {
+                try {
+                    const selectedIndices = JSON.parse(saved);
+                    museums.forEach((museum, index) => {
+                        const checkbox = document.getElementById(`museum-${index}`);
+                        if (checkbox) {
+                            checkbox.checked = selectedIndices.includes(index);
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error loading selections:', e);
+                }
+            }
+        }
 
         // Load last search term from localStorage on page load
         function loadLastSearchTerm() {
@@ -281,6 +433,13 @@
                 return;
             }
 
+            const selectedMuseums = getSelectedMuseums();
+            
+            if (selectedMuseums.length === 0) {
+                showStatus('Please select at least one museum', 'warning');
+                return;
+            }
+
             // Save the search term to localStorage
             saveSearchTerm(searchTerm);
 
@@ -289,34 +448,31 @@
 
             let opened = 0;
             let failed = 0;
-
-            let tabsOpened = 0;
             
             // Keep refocusing on this window aggressively
             const refocusInterval = setInterval(() => {
                 window.focus();
             }, 10);
             
-            museums.forEach((url, index) => {
+            selectedMuseums.forEach((museum, index) => {
                 setTimeout(() => {
-                    const searchUrl = url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
+                    const searchUrl = museum.url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
                     const newWindow = window.open(searchUrl, '_blank');
                     
                     if (newWindow) {
                         opened++;
-                        tabsOpened++;
                         // Force focus back immediately
                         window.focus();
                     } else {
                         failed++;
                     }
 
-                    if (index === museums.length - 1) {
+                    if (index === selectedMuseums.length - 1) {
                         // Stop the aggressive refocusing
                         setTimeout(() => clearInterval(refocusInterval), 500);
                         
                         searchButton.disabled = false;
-                        searchButton.textContent = 'Search All';
+                        searchButton.textContent = 'Search Selected';
                         
                         if (failed > 0) {
                             showStatus(`Opened ${opened} tabs. ${failed} blocked - please allow pop-ups and try again.`, 'warning');
@@ -336,7 +492,30 @@
             }
         });
 
-        // Load last search term and focus input on page load
+        // Select All button
+        document.getElementById('selectAllBtn').addEventListener('click', () => {
+            museums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-${index}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+            updateTabCount();
+        });
+
+        // Select None button
+        document.getElementById('selectNoneBtn').addEventListener('click', () => {
+            museums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-${index}`);
+                if (checkbox) {
+                    checkbox.checked = false;
+                }
+            });
+            updateTabCount();
+        });
+
+        // Initialize
+        generateCheckboxes();
         loadLastSearchTerm();
         searchInput.focus();
         searchInput.select();
