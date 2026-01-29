@@ -290,15 +290,18 @@
             let opened = 0;
             let failed = 0;
 
+            let tabsOpened = 0;
+            
             museums.forEach((url, index) => {
                 setTimeout(() => {
                     const searchUrl = url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
                     const newWindow = window.open(searchUrl, '_blank');
                     
                     if (newWindow) {
-                        newWindow.blur(); // Send new tab to background
-                        window.focus();   // Keep current tab in focus
                         opened++;
+                        tabsOpened++;
+                        // Immediately refocus on the portal after each tab opens
+                        setTimeout(() => window.focus(), 50);
                     } else {
                         failed++;
                     }
