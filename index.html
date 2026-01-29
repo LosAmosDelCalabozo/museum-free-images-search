@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museum Search Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .museum-list {
+            list-style: none;
+            font-size: 0.85em;
+            color: #555;
+            line-height: 1.6;
+            columns: 2;
+            column-gap: 20px;
+        }
+
+        .museum-list li {
+            margin-bottom: 5px;
+            break-inside: avoid;
+        }
+
+        .museum-list li:before {
+            content: "→ ";
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .museum-list {
+                columns: 1;
+            }
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Museum Search Portal</h1>
+        <p class="subtitle">Search across 24+ major art museums worldwide</p>
+
+        <div class="info">
+            <h3>Museums Included</h3>
+            <ul class="museum-list">
+                <li>Art Institute of Chicago</li>
+                <li>Newfields Museum</li>
+                <li>Cleveland Museum of Art</li>
+                <li>Gallerix.org</li>
+                <li>Yale University Art Gallery</li>
+                <li>Walters Art Museum</li>
+                <li>Smithsonian (3 collections)</li>
+                <li>National Gallery of Art</li>
+                <li>Metropolitan Museum</li>
+                <li>LACMA</li>
+                <li>Paris Museums (2 collections)</li>
+                <li>Te Papa Museum</li>
+                <li>Rijksmuseum (4 collections)</li>
+                <li>Getty Museum</li>
+                <li>Museo del Prado (2 collections)</li>
+                <li>Yale British Art Center</li>
+            </ul>
+        </div>
+
+        <div class="search-box">
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Enter search term (e.g., landscape, portrait, monet...)" 
+                value="miner"
+            />
+            <button id="searchButton">Search All</button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="footer">
+            Opens 24 tabs • Allow pop-ups if prompted
+        </div>
+    </div>
+
+    <script>
+        const museums = [
+            'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting&is_public_domain=1',
+            'https://collections.discovernewfields.org/search?showOnly=is_public_domain&object_types.keyword=paintings&searchTerm=SEARCH&section=artworks',
+            'https://www.clevelandart.org/art/collection/search?search=SEARCH&limit_by=&cc0=1',
+            'https://www.google.com/search?q=intitle%3ASEARCH+site%3Ahttps%3A%2F%2Fgallerix.org&tbm=isch',
+            'https://artgallery.yale.edu/collection?query=SEARCH&f%5B0%5D=classification%3APaintings&f%5B1%5D=image_availability%3A1&f%5B2%5D=open_access%3A1&page=2',
+            'https://art.thewalters.org/search/?era-to=bce&era-from=bce&q=SEARCH&q-scope=everything&medium%5B%5D=17',
+            'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Drawings%22',
+            'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Paintings%22',
+            'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type%3A%22Graphic+arts%22',
+            'https://www.nga.gov/artwork-search?keywords=SEARCH&download=1&f[]=awtype:107231&f[]=awtype:105956',
+            'https://www.metmuseum.org/art/collection/search?q=SEARCH&offset=0&searchField=Title&material=Paintings&showOnly=openAccess',
+            'https://collections.lacma.org/search/site/SEARCH?f%5B0%5D=bm_field_has_image%3Atrue&f%5B1%5D=im_field_classification%3A22',
+            'https://www.parismuseescollections.paris.fr/fr/denomination/peinture?keywords=SEARCH&limit=300&sort=score',
+            'https://www.parismuseescollections.paris.fr/fr/recherche/denominations/arts%20graphiques-166293/image-libre/1?keywords=SEARCH&limit=300&sort=score',
+            'https://collections.tepapa.govt.nz/search/SEARCH/results?wi=false&wdi=true&q=SEARCH&page=1&t=null&ir=Unrestricted&c=RareBooks',
+            'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=a8ea7a0fd82263755305737ecfad87b4&facets[0].nodeRelationType=HasObjectType',
+            'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Relevance&facets[0].id=a9f849002285adbd26678e361050083c&facets[0].nodeRelationType=HasObjectType',
+            'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=3159edbfc6b22de59dfb2522fecc2706&facets[0].nodeRelationType=HasObjectType',
+            'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity',
+            'https://search.getty.edu/gateway/search?q=SEARCH&cat=type&f=%22Drawings%22&types=%22Paintings%22&highlights=%22Open%20Content%20Images%22&rows=50&srt=&dir=s&dsp=0&img=1&pg=1',
+            'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH&cidoc:p2_has_type@@@pm:objectTypeNode=http://museodelprado.es/items/objecttype_20',
+            'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH&cidoc:p2_has_type@@@pm:objectTypeNode=http://museodelprado.es/items/objecttype_6',
+            'https://collections.britishart.yale.edu/?amp;doc-types=all&amp;q=SEARCH&amp;f[rights_ss][]=Free%20to%20Use&amp;search_field=simple_search&amp;doc-types=all&amp;q=SEARCH'
+        ];
+
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const statusDiv = document.getElementById('status');
+
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            setTimeout(() => {
+                statusDiv.className = 'status';
+            }, 5000);
+        }
+
+        function searchMuseums() {
+            const searchTerm = searchInput.value.trim();
+            
+            if (!searchTerm) {
+                showStatus('Please enter a search term', 'warning');
+                searchInput.focus();
+                return;
+            }
+
+            searchButton.disabled = true;
+            searchButton.textContent = 'Opening...';
+
+            let opened = 0;
+            let failed = 0;
+
+            museums.forEach((url, index) => {
+                setTimeout(() => {
+                    const searchUrl = url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
+                    const newWindow = window.open(searchUrl, '_blank');
+                    
+                    if (newWindow) {
+                        opened++;
+                    } else {
+                        failed++;
+                    }
+
+                    if (index === museums.length - 1) {
+                        searchButton.disabled = false;
+                        searchButton.textContent = 'Search All';
+                        
+                        if (failed > 0) {
+                            showStatus(`Opened ${opened} tabs. ${failed} blocked - please allow pop-ups and try again.`, 'warning');
+                        } else {
+                            showStatus(`Successfully opened ${opened} museum search tabs!`, 'success');
+                        }
+                    }
+                }, index * 100); // Stagger tab opening by 100ms
+            });
+        }
+
+        searchButton.addEventListener('click', searchMuseums);
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchMuseums();
+            }
+        });
+
+        // Focus input on load
+        searchInput.focus();
+        searchInput.select();
+    </script>
+</body>
+</html>
