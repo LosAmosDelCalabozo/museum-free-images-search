@@ -296,6 +296,8 @@
                     const newWindow = window.open(searchUrl, '_blank');
                     
                     if (newWindow) {
+                        newWindow.blur(); // Send new tab to background
+                        window.focus();   // Keep current tab in focus
                         opened++;
                     } else {
                         failed++;
