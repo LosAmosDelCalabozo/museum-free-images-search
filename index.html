@@ -246,9 +246,23 @@
             'https://collections.britishart.yale.edu/?amp;doc-types=all&amp;q=SEARCH&amp;f[rights_ss][]=Free%20to%20Use&amp;search_field=simple_search&amp;doc-types=all&amp;q=SEARCH'
         ];
 
+        const STORAGE_KEY = 'museumSearchTerm';
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
         const statusDiv = document.getElementById('status');
+
+        // Load last search term from localStorage on page load
+        function loadLastSearchTerm() {
+            const lastSearch = localStorage.getItem(STORAGE_KEY);
+            if (lastSearch) {
+                searchInput.value = lastSearch;
+            }
+        }
+
+        // Save search term to localStorage
+        function saveSearchTerm(term) {
+            localStorage.setItem(STORAGE_KEY, term);
+        }
 
         function showStatus(message, type) {
             statusDiv.textContent = message;
@@ -266,6 +280,9 @@
                 searchInput.focus();
                 return;
             }
+
+            // Save the search term to localStorage
+            saveSearchTerm(searchTerm);
 
             searchButton.disabled = true;
             searchButton.textContent = 'Opening...';
@@ -306,7 +323,8 @@
             }
         });
 
-        // Focus input on load
+        // Load last search term and focus input on page load
+        loadLastSearchTerm();
         searchInput.focus();
         searchInput.select();
     </script>
