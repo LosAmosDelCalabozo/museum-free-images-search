@@ -26,7 +26,7 @@
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
+            max-width: 900px;
             width: 100%;
         }
 
@@ -154,6 +154,23 @@
             grid-template-columns: 1fr 1fr;
             gap: 8px;
             column-gap: 20px;
+        }
+
+        .category-header {
+            grid-column: 1 / -1;
+            font-weight: 700;
+            color: #667eea;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e0e0ff;
+        }
+
+        .category-header:first-child {
+            margin-top: 0;
         }
 
         .museum-checkbox-item {
@@ -290,33 +307,66 @@
     </div>
 
     <script>
-        const museums = [
-            { name: 'Art Institute of Chicago - Paintings', url: 'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting&is_public_domain=1', icon: '🖼️' },
-            { name: 'Cleveland Museum of Art', url: 'https://www.clevelandart.org/art/collection/search?search=SEARCH&limit_by=&cc0=1', icon: '🎨' },
-            { name: 'Europeana - 3D', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%223D%22&query=SEARCH%20&reusability=open&view=grid', icon: '🗿' },
-            { name: 'Europeana - Images', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%22IMAGE%22&query=SEARCH%20&reusability=open&view=grid', icon: '📷' },
-            { name: 'Gallerix.org (Google Images)', url: 'https://www.google.com/search?q=intitle%3ASEARCH+site%3Ahttps%3A%2F%2Fgallerix.org&tbm=isch', icon: '🔍' },
-            { name: 'Getty Museum', url: 'https://search.getty.edu/gateway/search?q=SEARCH&cat=type&f=%22Drawings%22&types=%22Paintings%22&highlights=%22Open%20Content%20Images%22&rows=50&srt=&dir=s&dsp=0&img=1&pg=1', icon: '🎨' },
-            { name: 'LACMA', url: 'https://collections.lacma.org/search/site/SEARCH?f%5B0%5D=bm_field_has_image%3Atrue&f%5B1%5D=im_field_classification%3A22', icon: '🎨' },
-            { name: 'Metropolitan Museum - Paintings', url: 'https://www.metmuseum.org/art/collection/search?q=SEARCH&offset=0&searchField=Title&material=Paintings&showOnly=openAccess', icon: '🖼️' },
-            { name: 'Museo del Prado - Drawings', url: 'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH&cidoc:p2_has_type@@@pm:objectTypeNode=http://museodelprado.es/items/objecttype_6', icon: '✏️' },
-            { name: 'Museo del Prado - Paintings', url: 'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH&cidoc:p2_has_type@@@pm:objectTypeNode=http://museodelprado.es/items/objecttype_20', icon: '🖼️' },
-            { name: 'National Gallery of Art', url: 'https://www.nga.gov/artwork-search?keywords=SEARCH&download=1&f[]=awtype:107231&f[]=awtype:105956', icon: '🎨' },
-            { name: 'Newfields Museum - Paintings', url: 'https://collections.discovernewfields.org/search?showOnly=is_public_domain&object_types.keyword=paintings&searchTerm=SEARCH&section=artworks', icon: '🖼️' },
-            { name: 'Paris Museums - Graphic Arts', url: 'https://www.parismuseescollections.paris.fr/fr/recherche/denominations/arts%20graphiques-166293/image-libre/1?keywords=SEARCH&limit=300&sort=score', icon: '🖨️' },
-            { name: 'Paris Museums - Paintings', url: 'https://www.parismuseescollections.paris.fr/fr/denomination/peinture?keywords=SEARCH&limit=300&sort=score', icon: '🖼️' },
-            { name: 'Rijksmuseum - All Art', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity', icon: '🎨' },
-            { name: 'Rijksmuseum - Drawings', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Relevance&facets[0].id=a9f849002285adbd26678e361050083c&facets[0].nodeRelationType=HasObjectType', icon: '✏️' },
-            { name: 'Rijksmuseum - Paintings', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=a8ea7a0fd82263755305737ecfad87b4&facets[0].nodeRelationType=HasObjectType', icon: '🖼️' },
-            { name: 'Rijksmuseum - Prints', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=3159edbfc6b22de59dfb2522fecc2706&facets[0].nodeRelationType=HasObjectType', icon: '🖨️' },
-            { name: 'Smithsonian - Drawings', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Drawings%22', icon: '✏️' },
-            { name: 'Smithsonian - Graphic Arts', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type%3A%22Graphic+arts%22', icon: '🖨️' },
-            { name: 'Smithsonian - Paintings', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Paintings%22', icon: '🖼️' },
-            { name: 'Te Papa Museum', url: 'https://collections.tepapa.govt.nz/search/SEARCH/results?wi=false&wdi=true&q=SEARCH&page=1&t=null&ir=Unrestricted&c=RareBooks', icon: '📚' },
-            { name: 'Walters Art Museum', url: 'https://art.thewalters.org/search/?era-to=bce&era-from=bce&q=SEARCH&q-scope=everything&medium%5B%5D=17', icon: '🎨' },
-            { name: 'Yale British Art Center', url: 'https://collections.britishart.yale.edu/?search_field=simple_search&doc-types=objects&q=SEARCH', icon: '🎨' },
-            { name: 'Yale University Art Gallery - Paintings', url: 'https://artgallery.yale.edu/collection?query=SEARCH&f%5B0%5D=classification%3APaintings&f%5B1%5D=image_availability%3A1&f%5B2%5D=open_access%3A1&page=2', icon: '🖼️' }
-        ];
+        const museumGroups = {
+            'Paintings': [
+                { name: 'Art Institute of Chicago', url: 'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting&is_public_domain=1' },
+                { name: 'Barnes Foundation', url: 'https://collection.barnesfoundation.org/objects/?qtype=filter&qval={%22search%22:%22SEARCH%22,%22advancedFilters%22:{%22Artist%22:{},%22Copyright%22:{%22Public%20Domain%22:{%22filterType%22:%22Copyright%22,%22value%22:%22Public%20Domain%22,%22term%22:%22Public%20Domain%22,%22index%22:1,%22indexes%22:[4,7,8,10]}},%22Room%22:{},%22Classification%22:{},%22Year%22:{},%22Culture%22:{},%22Category%22:{%22Drawings%22:{%22filterType%22:%22Category%22,%22value%22:%22Drawings%22,%22term%22:%22Drawings%22,%22index%22:2},%22Prints%22:{%22filterType%22:%22Category%22,%22value%22:%22Prints%22,%22term%22:%22Prints%22,%22index%22:3},%22Paintings%22:{%22filterType%22:%22Category%22,%22value%22:%22Paintings%22,%22term%22:%22Paintings%22,%22index%22:4}}}}' },
+                { name: 'Belvedere Museum', url: 'https://sammlung.belvedere.at/search/SEARCH?openContentProgramFilter=true&filter=name%3AGem%C3%A4lde%3Bopencontentprogram%3Atrue#filters' },
+                { name: 'Clark Art Institute', url: 'https://www.clarkart.edu/museum/collections/browse-collections#/?text=SEARCH&collectionIds=100,94,97,93,101' },
+                { name: 'Finnish National Gallery', url: 'https://www.kansallisgalleria.fi/en/search?categories[]=artwork&copyrightFree=true&searchTerms[]=SEARCH' },
+                { name: 'Harvard Art Museums', url: 'https://harvardartmuseums.org/collections?q=SEARCH&worktype%5B%5D=127&load_amount=100&offset=0' },
+                { name: 'KMSKA (Antwerp)', url: 'https://kmska.be/en/overview/the-collection?type=1448&type=1449&type=1445&type=1461&type=1446&type=1465&type=1858&search=SEARCH' },
+                { name: 'Metropolitan Museum', url: 'https://www.metmuseum.org/art/collection/search?q=SEARCH&offset=0&searchField=Title&material=Paintings&showOnly=openAccess' },
+                { name: 'National Gallery of Art', url: 'https://www.nga.gov/artwork-search?keywords=SEARCH&download=1&f[]=awtype:107231&f[]=awtype:105956' },
+                { name: 'National Museum in Krakow', url: 'https://zbiory.mnk.pl/en/search-result?phrase=SEARCH&filter=JTdCJTIydHlwZXMlMjI6JTdCJTIybmFtZSUyMjolMjJ0eXBlcyUyMiwlMjJ2YWx1ZSUyMjolNUIlN0IlMjJpZCUyMjoxMTM5MTMsJTIybmFtZSUyMjolMjJwYWludGluZyUyMiU3RCU1RCwlMjJkZXNjJTIyOm51bGwsJTIyYWN0aXZlJTIyOnRydWUlN0QlN0Q%3D' },
+                { name: 'National Museum in Warsaw', url: 'https://cyfrowe.mnw.art.pl/en/catalog?filter=JTdCJTIyc2VhcmNoVHlwZSUyMjolN0IlMjJuYW1lJTIyOiUyMnNlYXJjaFR5cGUlMjIsJTIydmFsdWUlMjI6JTIybmFtZSUyMiwlMjJkZXNjJTIyOiUyMmNhdGFsb2cucmFkaW8tc2VhcmNoLm9iamVjdC1uYW1lJTIyLCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMnR5cGVzJTIyOiU3QiUyMm5hbWUlMjI6JTIydHlwZXMlMjIsJTIydmFsdWUlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE3MDA4JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIycGFpbnRpbmclMjAoMjQpJTIyLCUyMnRpdGxlJTIyOiUyMnBhaW50aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LWxocDMtMTE3MDA4JTIyJTdEJTVELCUyMmRlc2MlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE3MDA4JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIycGFpbnRpbmclMjAoMjQpJTIyLCUyMnRpdGxlJTIyOiUyMnBhaW50aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LWxocDMtMTE3MDA4JTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMmNvcHlyaWdodHMlMjI6JTdCJTIybmFtZSUyMjolMjJjb3B5cmlnaHRzJTIyLCUyMnZhbHVlJTIyOiU1QiU3QiUyMmlkJTIyOiUyMjUwMCUyMiwlMjJlbGVtZW50JTIyOiU3QiU3RCwlMjJkaXNhYmxlZCUyMjpmYWxzZSwlMjJzZWxlY3RlZCUyMjpmYWxzZSwlMjJ0ZXh0JTIyOiUyMlB1YmxpYyUyMGRvbWFpbiUyMiwlMjJ0aXRsZSUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIyX3Jlc3VsdElkJTIyOiUyMnNlbGVjdDItNmk3Zi1yZXN1bHQtNnV1ay01MDAlMjIlN0QlNUQsJTIyZGVzYyUyMjolNUIlN0IlMjJpZCUyMjolMjI1MDAlMjIsJTIyZWxlbWVudCUyMjolN0IlN0QsJTIyZGlzYWJsZWQlMjI6ZmFsc2UsJTIyc2VsZWN0ZWQlMjI6ZmFsc2UsJTIydGV4dCUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIydGl0bGUlMjI6JTIyUHVibGljJTIwZG9tYWluJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLTZpN2YtcmVzdWx0LTZ1dWstNTAwJTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdEJTdE&phrase=SEARCH' },
+                { name: 'National Museum of Norway', url: 'https://www.nasjonalmuseet.no/en/collection/search/?query=SEARCH&object-name=painting' },
+                { name: 'Newfields Museum', url: 'https://collections.discovernewfields.org/search?showOnly=is_public_domain&object_types.keyword=paintings&searchTerm=SEARCH&section=artworks' },
+                { name: 'NYPL - Paintings', url: 'https://digitalcollections.nypl.org/search/index?q=SEARCH&filters=%5Bgenre%3DPaintings%5D%5Brights%3DpublicDomain%5D' },
+                { name: 'Paris Museums', url: 'https://www.parismuseescollections.paris.fr/fr/denomination/peinture?keywords=SEARCH&limit=300&sort=score' },
+                { name: 'Rijksmuseum', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=a8ea7a0fd82263755305737ecfad87b4&facets[0].nodeRelationType=HasObjectType' },
+                { name: 'Saint Louis Art Museum', url: 'https://www.slam.org/collection/objects/?se=SEARCH&show_on_view=false&featured_objects=false&public_domain=true&recent_acquisitions=false&outdoors=false&object_classifications=paintings' },
+                { name: 'Smithsonian', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Paintings%22' },
+                { name: 'SMK (National Gallery of Denmark)', url: 'https://open.smk.dk/en/art/advanced/object_names?q=SEARCH&page=0&filters=public_domain%3Atrue%7Chas_image%3Atrue%7Cobject_names%3Apainting' },
+                { name: 'Städel Museum', url: 'https://sammlung.staedelmuseum.de/en/search?q=SEARCH&f=+object:term(48)|object:term(2607)&flags=allScopes,downloadable' },
+                { name: 'Web umenia', url: 'https://www.webumenia.sk/en/katalog?filter%5Bis_free%5D=true&filter%5Bhas_image%5D=true&q=SEARCH' },
+                { name: 'Yale University Art Gallery', url: 'https://artgallery.yale.edu/collection?query=SEARCH&f%5B0%5D=classification%3APaintings&f%5B1%5D=image_availability%3A1&f%5B2%5D=open_access%3A1&page=2' }
+            ],
+            'Drawings': [
+                { name: 'Harvard Art Museums', url: 'https://harvardartmuseums.org/collections?q=SEARCH&worktype%5B%5D=251&load_amount=100&offset=0' },
+                { name: 'National Museum in Warsaw', url: 'https://cyfrowe.mnw.art.pl/en/catalog?filter=JTdCJTIyc2VhcmNoVHlwZSUyMjolN0IlMjJuYW1lJTIyOiUyMnNlYXJjaFR5cGUlMjIsJTIydmFsdWUlMjI6JTIybmFtZSUyMiwlMjJkZXNjJTIyOiUyMmNhdGFsb2cucmFkaW8tc2VhcmNoLm9iamVjdC1uYW1lJTIyLCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMnR5cGVzJTIyOiU3QiUyMm5hbWUlMjI6JTIydHlwZXMlMjIsJTIydmFsdWUlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE2NzI5JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIyZHJhd2luZyUyMCg5KSUyMiwlMjJ0aXRsZSUyMjolMjJkcmF3aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LTB5cXgtMTE2NzI5JTIyJTdEJTVELCUyMmRlc2MlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE2NzI5JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIyZHJhd2luZyUyMCg5KSUyMiwlMjJ0aXRsZSUyMjolMjJkcmF3aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LTB5cXgtMTE2NzI5JTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMmNvcHlyaWdodHMlMjI6JTdCJTIybmFtZSUyMjolMjJjb3B5cmlnaHRzJTIyLCUyMnZhbHVlJTIyOiU1QiU3QiUyMmlkJTIyOiUyMjUwMCUyMiwlMjJlbGVtZW50JTIyOiU3QiU3RCwlMjJkaXNhYmxlZCUyMjpmYWxzZSwlMjJzZWxlY3RlZCUyMjpmYWxzZSwlMjJ0ZXh0JTIyOiUyMlB1YmxpYyUyMGRvbWFpbiUyMiwlMjJ0aXRsZSUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIyX3Jlc3VsdElkJTIyOiUyMnNlbGVjdDItNmk3Zi1yZXN1bHQtNnV1ay01MDAlMjIlN0QlNUQsJTIyZGVzYyUyMjolNUIlN0IlMjJpZCUyMjolMjI1MDAlMjIsJTIyZWxlbWVudCUyMjolN0IlN0QsJTIyZGlzYWJsZWQlMjI6ZmFsc2UsJTIyc2VsZWN0ZWQlMjI6ZmFsc2UsJTIydGV4dCUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIydGl0bGUlMjI6JTIyUHVibGljJTIwZG9tYWluJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLTZpN2YtcmVzdWx0LTZ1dWstNTAwJTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdEJTdE&phrase=SEARCH' },
+                { name: 'National Museum of Norway', url: 'https://www.nasjonalmuseet.no/en/collection/search/?query=SEARCH&object-name=drawing' },
+                { name: 'Rijksmuseum', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Relevance&facets[0].id=a9f849002285adbd26678e361050083c&facets[0].nodeRelationType=HasObjectType' },
+                { name: 'Smithsonian', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Drawings%22' },
+                { name: 'SMK (National Gallery of Denmark)', url: 'https://open.smk.dk/en/art/advanced/object_names?q=SEARCH&page=0&filters=public_domain%3Atrue%7Chas_image%3Atrue%7Cobject_names%3Adrawing' }
+            ],
+            'Prints': [
+                { name: 'Harvard Art Museums', url: 'https://harvardartmuseums.org/collections?q=SEARCH&worktype%5B%5D=289&load_amount=100&offset=0' },
+                { name: 'National Museum in Krakow', url: 'https://zbiory.mnk.pl/en/search-result?phrase=SEARCH&filter=JTdCJTIydHlwZXMlMjI6JTdCJTIybmFtZSUyMjolMjJ0eXBlcyUyMiwlMjJ2YWx1ZSUyMjolNUIlN0IlMjJpZCUyMjoxMDA0MzMsJTIybmFtZSUyMjolMjJwcmludHMlMjAodmlzdWFsJTIwd29ya3MpJTIyJTdEJTVELCUyMmRlc2MlMjI6bnVsbCwlMjJhY3RpdmUlMjI6dHJ1ZSU3RCU3RA%3D%3D&limit=40' },
+                { name: 'National Museum in Warsaw', url: 'https://cyfrowe.mnw.art.pl/en/catalog?filter=JTdCJTIyc2VhcmNoVHlwZSUyMjolN0IlMjJuYW1lJTIyOiUyMnNlYXJjaFR5cGUlMjIsJTIydmFsdWUlMjI6JTIybmFtZSUyMiwlMjJkZXNjJTIyOiUyMmNhdGFsb2cucmFkaW8tc2VhcmNoLm9iamVjdC1uYW1lJTIyLCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMnR5cGVzJTIyOiU3QiUyMm5hbWUlMjI6JTIydHlwZXMlMjIsJTIydmFsdWUlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE2MDYxJTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIycHJpbnQlMjAoMSklMjIsJTIydGl0bGUlMjI6JTIycHJpbnQlMjIsJTIyX3Jlc3VsdElkJTIyOiUyMnNlbGVjdDItZ203OS1yZXN1bHQtdzJ2Mi0xMTYwNjElMjIlN0QlNUQsJTIyZGVzYyUyMjolNUIlN0IlMjJpZCUyMjolMjIxMTYwNjElMjIsJTIyZWxlbWVudCUyMjolN0IlN0QsJTIyZGlzYWJsZWQlMjI6ZmFsc2UsJTIyc2VsZWN0ZWQlMjI6ZmFsc2UsJTIydGV4dCUyMjolMjJwcmludCUyMCgxKSUyMiwlMjJ0aXRsZSUyMjolMjJwcmludCUyMiwlMjJfcmVzdWx0SWQlMjI6JTIyc2VsZWN0Mi1nbTc5LXJlc3VsdC13MnYyLTExNjA2MSUyMiU3RCU1RCwlMjJhY3RpdmUlMjI6dHJ1ZSU3RCwlMjJjb3B5cmlnaHRzJTIyOiU3QiUyMm5hbWUlMjI6JTIyY29weXJpZ2h0cyUyMiwlMjJ2YWx1ZSUyMjolNUIlN0IlMjJpZCUyMjolMjI1MDAlMjIsJTIyZWxlbWVudCUyMjolN0IlN0QsJTIyZGlzYWJsZWQlMjI6ZmFsc2UsJTIyc2VsZWN0ZWQlMjI6ZmFsc2UsJTIydGV4dCUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIydGl0bGUlMjI6JTIyUHVibGljJTIwZG9tYWluJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLTZpN2YtcmVzdWx0LTZ1dWstNTAwJTIyJTdEJTVELCUyMmRlc2MlMjI6JTVCJTdCJTIyaWQlMjI6JTIyNTAwJTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIyUHVibGljJTIwZG9tYWluJTIyLCUyMnRpdGxlJTIyOiUyMlB1YmxpYyUyMGRvbWFpbiUyMiwlMjJfcmVzdWx0SWQlMjI6JTIyc2VsZWN0Mi02aTdmLXJlc3VsdC02dXVrLTUwMCUyMiU3RCU1RCwlMjJhY3RpdmUlMjI6dHJ1ZSU3RCU3RA%3D%3D&phrase=SEARCH' },
+                { name: 'National Museum of Norway', url: 'https://www.nasjonalmuseet.no/en/collection/search/?query=SEARCH&object-name=print' },
+                { name: 'Rijksmuseum', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=3159edbfc6b22de59dfb2522fecc2706&facets[0].nodeRelationType=HasObjectType' },
+                { name: 'SMK (National Gallery of Denmark)', url: 'https://open.smk.dk/en/art/advanced/object_names?q=SEARCH&page=0&filters=public_domain%3Atrue%7Chas_image%3Atrue%7Cobject_names%3Aprint' }
+            ],
+            'Illustrations & Graphic Arts': [
+                { name: 'National Museum in Krakow', url: 'https://zbiory.mnk.pl/en/search-result?phrase=SEARCH&filter=JTdCJTIydHlwZXMlMjI6JTdCJTIybmFtZSUyMjolMjJ0eXBlcyUyMiwlMjJ2YWx1ZSUyMjolNUIlN0IlMjJpZCUyMjo5OTk5NywlMjJuYW1lJTIyOiUyMmlsbHVzdHJhdGlvbnMlMjAobGF5b3V0JTIwZmVhdHVyZXMpJTIyJTdEJTVELCUyMmRlc2MlMjI6bnVsbCwlMjJhY3RpdmUlMjI6dHJ1ZSU3RCU3RA%3D%3D&limit=40' },
+                { name: 'NYPL - Illustrations', url: 'https://digitalcollections.nypl.org/search/index?q=SEARCH&filters=%5Brights%3DpublicDomain%5D%5Bgenre%3DIllustrations%5D' },
+                { name: 'Paris Museums', url: 'https://www.parismuseescollections.paris.fr/fr/recherche/denominations/arts%20graphiques-166293/image-libre/1?keywords=SEARCH&limit=300&sort=score' },
+                { name: 'Smithsonian', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type%3A%22Graphic+arts%22' }
+            ],
+            'Mixed Collections': [
+                { name: 'Cleveland Museum of Art', url: 'https://www.clevelandart.org/art/collection/search?search=SEARCH&limit_by=&cc0=1' },
+                { name: 'Europeana - 3D', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%223D%22&query=SEARCH%20&reusability=open&view=grid' },
+                { name: 'Europeana - Images', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%22IMAGE%22&query=SEARCH%20&reusability=open&view=grid' },
+                { name: 'Gallerix.org (Google Images)', url: 'https://www.google.com/search?q=intitle%3ASEARCH+site%3Ahttps%3A%2F%2Fgallerix.org&tbm=isch' },
+                { name: 'Getty Museum', url: 'https://search.getty.edu/gateway/search?q=SEARCH&cat=type&f=%22Drawings%22&types=%22Paintings%22&highlights=%22Open%20Content%20Images%22&rows=50&srt=&dir=s&dsp=0&img=1&pg=1' },
+                { name: 'LACMA', url: 'https://collections.lacma.org/search/site/SEARCH?f%5B0%5D=bm_field_has_image%3Atrue&f%5B1%5D=im_field_classification%3A22' },
+                { name: 'Rijksmuseum - All Art', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity' },
+                { name: 'Te Papa Museum', url: 'https://collections.tepapa.govt.nz/search/SEARCH/results?wi=false&wdi=true&q=SEARCH&page=1&t=null&ir=Unrestricted&c=RareBooks' },
+                { name: 'Walters Art Museum', url: 'https://art.thewalters.org/search/?era-to=bce&era-from=bce&q=SEARCH&q-scope=everything&medium%5B%5D=17' },
+                { name: 'Yale British Art Center', url: 'https://collections.britishart.yale.edu/?search_field=simple_search&doc-types=objects&q=SEARCH' }
+            ]
+        };
 
         const STORAGE_KEY = 'museumSearchTerm';
         const SELECTED_KEY = 'museumSelectedURLs';
@@ -326,25 +376,55 @@
         const checkboxContainer = document.getElementById('museumCheckboxes');
         const tabCountSpan = document.getElementById('tabCount');
 
-        // Generate checkboxes
+        // Icon mapping for categories
+        const categoryIcons = {
+            'Paintings': '🖼️',
+            'Drawings': '✏️',
+            'Prints': '🖨️',
+            'Illustrations & Graphic Arts': '🎨',
+            'Mixed Collections': '🏛️'
+        };
+
+        // Flatten museums for easier indexing
+        let allMuseums = [];
+        Object.keys(museumGroups).forEach(category => {
+            museumGroups[category].forEach(museum => {
+                allMuseums.push({ ...museum, category });
+            });
+        });
+
+        // Generate checkboxes grouped by category
         function generateCheckboxes() {
-            museums.forEach((museum, index) => {
-                const div = document.createElement('div');
-                div.className = 'museum-checkbox-item';
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = `museum-${index}`;
-                checkbox.checked = true; // All checked by default
-                checkbox.addEventListener('change', updateTabCount);
-                
-                const label = document.createElement('label');
-                label.htmlFor = `museum-${index}`;
-                label.innerHTML = `${museum.icon} ${museum.name}`;
-                
-                div.appendChild(checkbox);
-                div.appendChild(label);
-                checkboxContainer.appendChild(div);
+            Object.keys(museumGroups).forEach(category => {
+                // Create category header
+                const categoryHeader = document.createElement('div');
+                categoryHeader.className = 'category-header';
+                categoryHeader.innerHTML = `${categoryIcons[category]} ${category}`;
+                checkboxContainer.appendChild(categoryHeader);
+
+                // Create museums in this category
+                museumGroups[category].forEach(museum => {
+                    const globalIndex = allMuseums.findIndex(
+                        m => m.name === museum.name && m.url === museum.url
+                    );
+
+                    const div = document.createElement('div');
+                    div.className = 'museum-checkbox-item';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `museum-${globalIndex}`;
+                    checkbox.checked = true; // All checked by default
+                    checkbox.addEventListener('change', updateTabCount);
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `museum-${globalIndex}`;
+                    label.textContent = museum.name;
+                    
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+                    checkboxContainer.appendChild(div);
+                });
             });
             
             // Load saved selections
@@ -364,7 +444,7 @@
         // Get selected museums
         function getSelectedMuseums() {
             const selected = [];
-            museums.forEach((museum, index) => {
+            allMuseums.forEach((museum, index) => {
                 const checkbox = document.getElementById(`museum-${index}`);
                 if (checkbox && checkbox.checked) {
                     selected.push(museum);
@@ -376,7 +456,7 @@
         // Save selected museums to localStorage
         function saveSelectedMuseums() {
             const selectedIndices = [];
-            museums.forEach((museum, index) => {
+            allMuseums.forEach((museum, index) => {
                 const checkbox = document.getElementById(`museum-${index}`);
                 if (checkbox && checkbox.checked) {
                     selectedIndices.push(index);
@@ -391,7 +471,7 @@
             if (saved) {
                 try {
                     const selectedIndices = JSON.parse(saved);
-                    museums.forEach((museum, index) => {
+                    allMuseums.forEach((museum, index) => {
                         const checkbox = document.getElementById(`museum-${index}`);
                         if (checkbox) {
                             checkbox.checked = selectedIndices.includes(index);
@@ -494,7 +574,7 @@
 
         // Select All button
         document.getElementById('selectAllBtn').addEventListener('click', () => {
-            museums.forEach((museum, index) => {
+            allMuseums.forEach((museum, index) => {
                 const checkbox = document.getElementById(`museum-${index}`);
                 if (checkbox) {
                     checkbox.checked = true;
@@ -505,7 +585,7 @@
 
         // Select None button
         document.getElementById('selectNoneBtn').addEventListener('click', () => {
-            museums.forEach((museum, index) => {
+            allMuseums.forEach((museum, index) => {
                 const checkbox = document.getElementById(`museum-${index}`);
                 if (checkbox) {
                     checkbox.checked = false;
