@@ -178,7 +178,7 @@
 <body>
     <div class="container">
         <h1>🎨 Museum Search Portal</h1>
-        <p class="subtitle">Search across 24+ major art museums worldwide</p>
+        <p class="subtitle">Search across 15+ major art museums worldwide</p>
 
         <div class="info">
             <h3>Museums Included</h3>
@@ -292,6 +292,11 @@
 
             let tabsOpened = 0;
             
+            // Keep refocusing on this window aggressively
+            const refocusInterval = setInterval(() => {
+                window.focus();
+            }, 10);
+            
             museums.forEach((url, index) => {
                 setTimeout(() => {
                     const searchUrl = url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
@@ -300,13 +305,16 @@
                     if (newWindow) {
                         opened++;
                         tabsOpened++;
-                        // Immediately refocus on the portal after each tab opens
-                        setTimeout(() => window.focus(), 50);
+                        // Force focus back immediately
+                        window.focus();
                     } else {
                         failed++;
                     }
 
                     if (index === museums.length - 1) {
+                        // Stop the aggressive refocusing
+                        setTimeout(() => clearInterval(refocusInterval), 500);
+                        
                         searchButton.disabled = false;
                         searchButton.textContent = 'Search All';
                         
