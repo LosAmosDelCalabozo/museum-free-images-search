@@ -370,7 +370,7 @@
             position: sticky;
             top: 0;
             background: white;
-            padding: 15px 20px;
+            padding: 15px 0;
             border-bottom: 2px solid #667eea;
             margin-bottom: 20px;
             display: flex;
@@ -378,63 +378,27 @@
             align-items: center;
             z-index: 100;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .iframe-header.collapsed {
-            padding: 8px 15px;
-            border-bottom: 1px solid #e0e0e0;
-            background: #f8f9ff;
-            transform: translateY(-100%);
+            padding: 5px 0;
+        }
+
+        .iframe-header.collapsed h2 {
             opacity: 0;
-            pointer-events: none;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
         }
 
-        .iframe-header.collapsed .collapsed-close-btn {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: all;
-        }
-
-        .collapsed-close-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5em;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10001;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(-20px);
-            pointer-events: none;
-        }
-
-        .collapsed-close-btn:hover {
-            background: #5568d3;
-            transform: scale(1.1);
+        .iframe-header.collapsed .close-iframes {
+            margin: 0 auto;
         }
 
         .iframe-header h2 {
             margin: 0;
             color: #667eea;
             font-size: 1.3em;
-            transition: all 0.3s ease;
-        }
-
-        .iframe-header.collapsed h2 {
-            opacity: 0;
-            font-size: 0.9em;
         }
 
         .close-iframes {
@@ -445,16 +409,10 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s ease;
         }
 
         .close-iframes:hover {
             background: #5568d3;
-        }
-
-        .iframe-header.collapsed .close-iframes {
-            opacity: 0;
-            pointer-events: none;
         }
 
         .iframe-grid {
@@ -536,7 +494,7 @@
                 <div class="select-buttons">
                     <button id="selectAllBtn" class="select-btn">Select All</button>
                     <button id="selectNoneBtn" class="select-btn">Select None</button>
-                    <button id="selectIframeBtn" class="select-btn">Select Iframe-Compatible</button>
+                    <button id="selectIframeBtn" class="select-btn">Select Single-Page View Only</button>
                 </div>
             </div>
             <div class="museum-checkboxes" id="museumCheckboxes">
@@ -605,7 +563,7 @@
             ],
             'Drawings': [
                 { name: 'Harvard Art Museums', url: 'https://harvardartmuseums.org/collections?q=SEARCH&worktype%5B%5D=251&load_amount=100&offset=0' },
-                { name: 'National Museum in Warsaw', url: 'https://cyfrowe.mnw.art.pl/en/catalog?filter=JTdCJTIyc2VhcmNoVHlwZSUyMjolN0IlMjJuYW1lJTIyOiUyMnNlYXJjaFR5cGUlMjIsJTIydmFsdWUlMjI6JTIybmFtZSUyMiwlMjJkZXNjJTIyOiUyMmNhdGFsb2cucmFkaW8tc2VhcmNoLm9iamVjdC1uYW1lJTIyLCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMnR5cGVzJTIyOiU3QiUyMm5hbWUlMjI6JTIydHlwZXMlMjIsJTIydmFsdWUlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE2NzI5JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIyZHJhd2luZyUyMCg5KSUyMiwlMjJ0aXRsZSUyMjolMjJkcmF3aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LTB5cXgtMTE2NzI5JTIyJTdEJTVELCUyMmRlc2MlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE2NzI5JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIyZHJhd2luZyUyMCg5KSUyMiwlMjJ0aXRsZSUyMjolMjJkcmF3aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LTB5cXgtMTE2NzI5JTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMmNvcHlyaWdodHMlMjI6JTdCJTIybmFtZSUyMjolMjJjb3B5cmlnaHRzJTIyLCUyMnZhbHVlJTIyOiU1QiU3QiUyMmlkJTIyOiUyMjUwMCUyMiwlMjJlbGVtZW50JTIyOiU3QiU3RCwlMjJkaXNhYmxlZCUyMjpmYWxzZSwlMjJzZWxlY3RlZCUyMjpmYWxzZSwlMjJ0ZXh0JTIyOiUyMlB1YmxpYyUyMGRvbWFpbiUyMiwlMjJ0aXRsZSUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIyX3Jlc3VsdElkJTIyOiUyMnNlbGVjdDItNmk3Zi1yZXN1bHQtNnV1ay01MDAlMjIlN0QlNUQsJTIyZGVzYyUyMjolNUIlN0CJTIyaWQlMjI6JTIyNTAwJTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIyUHVibGljJTIwZG9tYWluJTIyLCUyMnRpdGxlJTIyOiUyMlB1YmxpYyUyMGRvbWFpbiUyMiwlMjJfcmVzdWx0SWQlMjI6JTIyc2VsZWN0Mi02aTdmLXJlc3VsdC02dXVrLTUwMCUyMiU3RCU1RCwlMjJhY3RpdmUlMjI6dHJ1ZSU3RCU3RA%3D%3D&phrase=SEARCH' },
+                { name: 'National Museum in Warsaw', url: 'https://cyfrowe.mnw.art.pl/en/catalog?filter=JTdCJTIyc2VhcmNoVHlwZSUyMjolN0IlMjJuYW1lJTIyOiUyMnNlYXJjaFR5cGUlMjIsJTIydmFsdWUlMjI6JTIybmFtZSUyMiwlMjJkZXNjJTIyOiUyMmNhdGFsb2cucmFkaW8tc2VhcmNoLm9iamVjdC1uYW1lJTIyLCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMnR5cGVzJTIyOiU3QiUyMm5hbWUlMjI6JTIydHlwZXMlMjIsJTIydmFsdWUlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE2NzI5JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIyZHJhd2luZyUyMCg5KSUyMiwlMjJ0aXRsZSUyMjolMjJkcmF3aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LTB5cXgtMTE2NzI5JTIyJTdEJTVELCUyMmRlc2MlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE2NzI5JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIyZHJhd2luZyUyMCg5KSUyMiwlMjJ0aXRsZSUyMjolMjJkcmF3aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LTB5cXgtMTE2NzI5JTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMmNvcHlyaWdodHMlMjI6JTdCJTIybmFtZSUyMjolMjJjb3B5cmlnaHRzJTIyLCUyMnZhbHVlJTIyOiU1QiU3QiUyMmlkJTIyOiUyMjUwMCUyMiwlMjJlbGVtZW50JTIyOiU3QiU3RCwlMjJkaXNhYmxlZCUyMjpmYWxzZSwlMjJzZWxlY3RlZCUyMjpmYWxzZSwlMjJ0ZXh0JTIyOiUyMlB1YmxpYyUyMGRvbWFpbiUyMiwlMjJ0aXRsZSUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIyX3Jlc3VsdElkJTIyOiUyMnNlbGVjdDItNmk3Zi1yZXN1bHQtNnV1ay01MDAlMjIlN0QlNUQsJTIyZGVzYyUyMjolNUIlN0IlMjJpZCUyMjolMjI1MDAlMjIsJTIyZWxlbWVudCUyMjolN0IlN0QsJTIyZGlzYWJsZWQlMjI6ZmFsc2UsJTIyc2VsZWN0ZWQlMjI6ZmFsc2UsJTIydGV4dCUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIydGl0bGUlMjI6JTIyUHVibGljJTIwZG9tYWluJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLTZpN2YtcmVzdWx0LTZ1dWstNTAwJTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdEJTdE&phrase=SEARCH' },
                 { name: 'National Museum of Norway', url: 'https://www.nasjonalmuseet.no/en/collection/search/?query=SEARCH&object-name=drawing' },
                 { name: 'Rijksmuseum', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Relevance&facets[0].id=a9f849002285adbd26678e361050083c&facets[0].nodeRelationType=HasObjectType' },
                 { name: 'Smithsonian', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Drawings%22' },
@@ -641,16 +599,12 @@
 
         const STORAGE_KEY = 'museumSearchTerm';
         const SELECTED_KEY = 'museumSelectedURLs';
+        const DISPLAY_MODE_KEY = 'museumDisplayMode';
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
         const statusDiv = document.getElementById('status');
         const checkboxContainer = document.getElementById('museumCheckboxes');
         const tabCountSpan = document.getElementById('tabCount');
-
-        // Variables for scroll handling
-        let lastScrollTop = 0;
-        let isHeaderCollapsed = false;
-        let headerElement = null;
 
         // Icon mapping for categories
         const categoryIcons = {
@@ -668,39 +622,6 @@
                 allMuseums.push({ ...museum, category });
             });
         });
-
-        // Scroll handler for collapsing header
-        function handleScroll() {
-            if (!headerElement) return;
-            
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollThreshold = 50; // How many pixels to scroll before collapsing
-            
-            // If scrolling down and not already collapsed
-            if (scrollTop > lastScrollTop && scrollTop > scrollThreshold && !isHeaderCollapsed) {
-                collapseHeader();
-            } 
-            // If scrolling up and currently collapsed
-            else if (scrollTop < lastScrollTop && isHeaderCollapsed) {
-                expandHeader();
-            }
-            
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        }
-
-        function collapseHeader() {
-            if (headerElement && !isHeaderCollapsed) {
-                headerElement.classList.add('collapsed');
-                isHeaderCollapsed = true;
-            }
-        }
-
-        function expandHeader() {
-            if (headerElement && isHeaderCollapsed) {
-                headerElement.classList.remove('collapsed');
-                isHeaderCollapsed = false;
-            }
-        }
 
         // Generate checkboxes grouped by category
         function generateCheckboxes() {
@@ -858,6 +779,22 @@
             localStorage.setItem(STORAGE_KEY, term);
         }
 
+        // Load display mode preference
+        function loadDisplayMode() {
+            const savedMode = localStorage.getItem(DISPLAY_MODE_KEY);
+            if (savedMode) {
+                const radioButton = document.querySelector(`input[name="displayMode"][value="${savedMode}"]`);
+                if (radioButton) {
+                    radioButton.checked = true;
+                }
+            }
+        }
+
+        // Save display mode preference
+        function saveDisplayMode(mode) {
+            localStorage.setItem(DISPLAY_MODE_KEY, mode);
+        }
+
         function showStatus(message, type) {
             statusDiv.textContent = message;
             statusDiv.className = `status ${type}`;
@@ -924,8 +861,7 @@
                 // Create header
                 const header = document.createElement('div');
                 header.className = 'iframe-header';
-                headerElement = header; // Store reference for scroll handling
-                
+                header.id = 'iframeHeader';
                 let headerText = `🎨 Museum Search Results: "${searchTerm}" (${iframeMuseums.length} shown below`;
                 if (tabMuseums.length > 0) {
                     headerText += `, ${tabMuseums.length} opened in tabs`;
@@ -937,14 +873,6 @@
                     <button class="close-iframes" onclick="closeIframes()">✕ Close</button>
                 `;
                 container.appendChild(header);
-
-                // Create collapsed close button (hidden by default)
-                const collapsedCloseBtn = document.createElement('button');
-                collapsedCloseBtn.className = 'collapsed-close-btn';
-                collapsedCloseBtn.innerHTML = '✕';
-                collapsedCloseBtn.title = 'Close all museum results';
-                collapsedCloseBtn.onclick = closeIframes;
-                container.appendChild(collapsedCloseBtn);
 
                 // Create grid
                 const grid = document.createElement('div');
@@ -970,8 +898,22 @@
                 container.appendChild(grid);
                 document.body.appendChild(container);
 
-                // Add scroll event listener
-                container.addEventListener('scroll', handleScroll);
+                // Add scroll listener to collapse header
+                let lastScrollTop = 0;
+                container.addEventListener('scroll', () => {
+                    const scrollTop = container.scrollTop;
+                    const header = document.getElementById('iframeHeader');
+                    
+                    if (scrollTop > 100 && scrollTop > lastScrollTop) {
+                        // Scrolling down
+                        header.classList.add('collapsed');
+                    } else if (scrollTop < lastScrollTop) {
+                        // Scrolling up
+                        header.classList.remove('collapsed');
+                    }
+                    
+                    lastScrollTop = scrollTop;
+                });
             }
 
             // Show status message
@@ -989,12 +931,7 @@
         function closeIframes() {
             const container = document.getElementById('iframeContainer');
             if (container) {
-                // Remove scroll event listener
-                container.removeEventListener('scroll', handleScroll);
                 container.remove();
-                headerElement = null;
-                isHeaderCollapsed = false;
-                lastScrollTop = 0;
             }
         }
 
@@ -1046,6 +983,13 @@
             if (e.key === 'Enter') {
                 searchMuseums();
             }
+        });
+
+        // Save display mode when radio buttons change
+        document.querySelectorAll('input[name="displayMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                saveDisplayMode(e.target.value);
+            });
         });
 
         // Select All button
@@ -1104,6 +1048,7 @@
         // Initialize
         generateCheckboxes();
         loadLastSearchTerm();
+        loadDisplayMode();
         searchInput.focus();
         searchInput.select();
     </script>
