@@ -80,6 +80,45 @@
             color: #667eea;
         }
 
+        .tooltip-container {
+            position: relative;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            background: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            width: 280px;
+            text-align: center;
+            z-index: 1000;
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #333;
+        }
+
+        .tooltip-container:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
         input[type="text"] {
             flex: 1;
             padding: 15px 20px;
@@ -197,10 +236,24 @@
             margin-bottom: 8px;
             padding-bottom: 5px;
             border-bottom: 2px solid #e0e0ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .category-header:first-child {
             margin-top: 0;
+        }
+
+        .category-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .category-title {
+            flex: 1;
         }
 
         .museum-checkbox-item {
@@ -410,9 +463,10 @@
                 <input type="radio" name="displayMode" value="tabs" checked>
                 <span>Open in separate tabs</span>
             </label>
-            <label class="radio-label">
+            <label class="radio-label tooltip-container">
                 <input type="radio" name="displayMode" value="single">
-                <span>Show all in one page</span>
+                <span>Show all in one page (when possible) ⓘ</span>
+                <span class="tooltip">Some museums block iframe embedding due to security policies. These will open in separate tabs automatically.</span>
             </label>
         </div>
 
@@ -424,6 +478,7 @@
                 <div class="select-buttons">
                     <button id="selectAllBtn" class="select-btn">Select All</button>
                     <button id="selectNoneBtn" class="select-btn">Select None</button>
+                    <button id="selectIframeBtn" class="select-btn">Select Iframe-Compatible</button>
                 </div>
             </div>
             <div class="museum-checkboxes" id="museumCheckboxes">
@@ -437,6 +492,34 @@
     </div>
 
     <script>
+        // Sites that block iframe embedding
+        const noIframeHosts = [
+            'harvardartmuseums.org',
+            'si.edu',
+            'nasjonalmuseet.no',
+            'cyfrowe.mnw.art.pl',
+            'artgallery.yale.edu',
+            'sammlung.staedelmuseum.de',
+            'slam.org',
+            'paris.fr',
+            'zbiory.mnk.pl',
+            'nga.gov',
+            'metmuseum.org',
+            'kansallisgalleria.fi',
+            'art.thewalters.org',
+            'artic.edu',
+            'sammlung.belvedere.at',
+            'google.com',
+            'collections.britishart.yale.edu',
+            'collections.tepapa.govt.nz',
+            'collections.lacma.org'
+        ];
+
+        // Check if a URL can be iframed
+        function canBeIframed(url) {
+            return !noIframeHosts.some(host => url.includes(host));
+        }
+
         const museumGroups = {
             'Paintings': [
                 { name: 'Art Institute of Chicago', url: 'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting&is_public_domain=1' },
@@ -526,10 +609,23 @@
         // Generate checkboxes grouped by category
         function generateCheckboxes() {
             Object.keys(museumGroups).forEach(category => {
-                // Create category header
+                // Create category header with checkbox
                 const categoryHeader = document.createElement('div');
                 categoryHeader.className = 'category-header';
-                categoryHeader.innerHTML = `${categoryIcons[category]} ${category}`;
+                
+                const categoryCheckbox = document.createElement('input');
+                categoryCheckbox.type = 'checkbox';
+                categoryCheckbox.className = 'category-checkbox';
+                categoryCheckbox.id = `category-${category}`;
+                categoryCheckbox.checked = true;
+                categoryCheckbox.addEventListener('change', (e) => toggleCategory(category, e.target.checked));
+                
+                const categoryTitle = document.createElement('span');
+                categoryTitle.className = 'category-title';
+                categoryTitle.innerHTML = `${categoryIcons[category]} ${category}`;
+                
+                categoryHeader.appendChild(categoryCheckbox);
+                categoryHeader.appendChild(categoryTitle);
                 checkboxContainer.appendChild(categoryHeader);
 
                 // Create museums in this category
@@ -540,16 +636,30 @@
 
                     const div = document.createElement('div');
                     div.className = 'museum-checkbox-item';
+                    div.dataset.category = category;
                     
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.id = `museum-${globalIndex}`;
                     checkbox.checked = true; // All checked by default
-                    checkbox.addEventListener('change', updateTabCount);
+                    checkbox.addEventListener('change', () => {
+                        updateTabCount();
+                        updateCategoryCheckbox(category);
+                    });
                     
                     const label = document.createElement('label');
                     label.htmlFor = `museum-${globalIndex}`;
                     label.textContent = museum.name;
+                    
+                    // Add indicator if it can't be iframed
+                    if (!canBeIframed(museum.url)) {
+                        const indicator = document.createElement('span');
+                        indicator.style.color = '#999';
+                        indicator.style.fontSize = '0.85em';
+                        indicator.textContent = ' ↗';
+                        indicator.title = 'Opens in new tab only';
+                        label.appendChild(indicator);
+                    }
                     
                     div.appendChild(checkbox);
                     div.appendChild(label);
@@ -560,6 +670,32 @@
             // Load saved selections
             loadSelectedMuseums();
             updateTabCount();
+        }
+
+        // Toggle all museums in a category
+        function toggleCategory(category, checked) {
+            const items = document.querySelectorAll(`.museum-checkbox-item[data-category="${category}"]`);
+            items.forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.checked = checked;
+                }
+            });
+            updateTabCount();
+        }
+
+        // Update category checkbox based on individual museum checkboxes
+        function updateCategoryCheckbox(category) {
+            const items = document.querySelectorAll(`.museum-checkbox-item[data-category="${category}"] input[type="checkbox"]`);
+            const categoryCheckbox = document.getElementById(`category-${category}`);
+            
+            if (categoryCheckbox) {
+                const allChecked = Array.from(items).every(cb => cb.checked);
+                const noneChecked = Array.from(items).every(cb => !cb.checked);
+                
+                categoryCheckbox.checked = allChecked;
+                categoryCheckbox.indeterminate = !allChecked && !noneChecked;
+            }
         }
 
         // Update tab count display
@@ -666,7 +802,27 @@
         }
 
         function showInSinglePage(selectedMuseums, searchTerm) {
-            // Create iframe container
+            // Separate iframe-compatible and non-iframe sites
+            const iframeMuseums = selectedMuseums.filter(m => canBeIframed(m.url));
+            const tabMuseums = selectedMuseums.filter(m => !canBeIframed(m.url));
+
+            // Open non-iframe sites in tabs first
+            if (tabMuseums.length > 0) {
+                tabMuseums.forEach((museum, index) => {
+                    setTimeout(() => {
+                        const searchUrl = museum.url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
+                        window.open(searchUrl, '_blank');
+                    }, index * 100);
+                });
+            }
+
+            // If no iframe-compatible museums, just show message
+            if (iframeMuseums.length === 0) {
+                showStatus(`Opened ${tabMuseums.length} museums in new tabs (none support iframe embedding)`, 'success');
+                return;
+            }
+
+            // Create iframe container for compatible sites
             const container = document.createElement('div');
             container.className = 'iframe-container';
             container.id = 'iframeContainer';
@@ -674,8 +830,14 @@
             // Create header
             const header = document.createElement('div');
             header.className = 'iframe-header';
+            let headerText = `🎨 Museum Search Results: "${searchTerm}" (${iframeMuseums.length} in iframes`;
+            if (tabMuseums.length > 0) {
+                headerText += `, ${tabMuseums.length} in tabs`;
+            }
+            headerText += ')';
+            
             header.innerHTML = `
-                <h2>🎨 Museum Search Results: "${searchTerm}" (${selectedMuseums.length} museums)</h2>
+                <h2>${headerText}</h2>
                 <button class="close-iframes" onclick="closeIframes()">✕ Close</button>
             `;
             container.appendChild(header);
@@ -684,7 +846,7 @@
             const grid = document.createElement('div');
             grid.className = 'iframe-grid';
 
-            selectedMuseums.forEach(museum => {
+            iframeMuseums.forEach(museum => {
                 const searchUrl = museum.url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
                 
                 const item = document.createElement('div');
@@ -704,7 +866,11 @@
             container.appendChild(grid);
             document.body.appendChild(container);
 
-            showStatus(`Loaded ${selectedMuseums.length} museums in one page!`, 'success');
+            let statusMsg = `Loaded ${iframeMuseums.length} museum${iframeMuseums.length !== 1 ? 's' : ''} in one page`;
+            if (tabMuseums.length > 0) {
+                statusMsg += ` and opened ${tabMuseums.length} in separate tabs`;
+            }
+            showStatus(statusMsg + '!', 'success');
         }
 
         function closeIframes() {
@@ -772,6 +938,14 @@
                     checkbox.checked = true;
                 }
             });
+            // Update all category checkboxes
+            Object.keys(museumGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-${category}`);
+                if (categoryCheckbox) {
+                    categoryCheckbox.checked = true;
+                    categoryCheckbox.indeterminate = false;
+                }
+            });
             updateTabCount();
         });
 
@@ -782,6 +956,29 @@
                 if (checkbox) {
                     checkbox.checked = false;
                 }
+            });
+            // Update all category checkboxes
+            Object.keys(museumGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-${category}`);
+                if (categoryCheckbox) {
+                    categoryCheckbox.checked = false;
+                    categoryCheckbox.indeterminate = false;
+                }
+            });
+            updateTabCount();
+        });
+
+        // Select Iframe-Compatible button
+        document.getElementById('selectIframeBtn').addEventListener('click', () => {
+            allMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-${index}`);
+                if (checkbox) {
+                    checkbox.checked = canBeIframed(museum.url);
+                }
+            });
+            // Update all category checkboxes
+            Object.keys(museumGroups).forEach(category => {
+                updateCategoryCheckbox(category);
             });
             updateTabCount();
         });
