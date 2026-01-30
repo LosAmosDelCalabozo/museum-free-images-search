@@ -808,69 +808,73 @@
 
             // Open non-iframe sites in tabs first
             if (tabMuseums.length > 0) {
-                tabMuseums.forEach((museum, index) => {
-                    setTimeout(() => {
-                        const searchUrl = museum.url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
-                        window.open(searchUrl, '_blank');
-                    }, index * 100);
-                });
+                setTimeout(() => {
+                    tabMuseums.forEach((museum, index) => {
+                        setTimeout(() => {
+                            const searchUrl = museum.url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
+                            window.open(searchUrl, '_blank');
+                        }, index * 100);
+                    });
+                }, 500);
             }
 
-            // If no iframe-compatible museums, just show message
-            if (iframeMuseums.length === 0) {
-                showStatus(`Opened ${tabMuseums.length} museums in new tabs (none support iframe embedding)`, 'success');
-                return;
-            }
+            // Show iframe-compatible museums in the single page view
+            if (iframeMuseums.length > 0) {
+                // Create iframe container for compatible sites
+                const container = document.createElement('div');
+                container.className = 'iframe-container';
+                container.id = 'iframeContainer';
 
-            // Create iframe container for compatible sites
-            const container = document.createElement('div');
-            container.className = 'iframe-container';
-            container.id = 'iframeContainer';
-
-            // Create header
-            const header = document.createElement('div');
-            header.className = 'iframe-header';
-            let headerText = `🎨 Museum Search Results: "${searchTerm}" (${iframeMuseums.length} in iframes`;
-            if (tabMuseums.length > 0) {
-                headerText += `, ${tabMuseums.length} in tabs`;
-            }
-            headerText += ')';
-            
-            header.innerHTML = `
-                <h2>${headerText}</h2>
-                <button class="close-iframes" onclick="closeIframes()">✕ Close</button>
-            `;
-            container.appendChild(header);
-
-            // Create grid
-            const grid = document.createElement('div');
-            grid.className = 'iframe-grid';
-
-            iframeMuseums.forEach(museum => {
-                const searchUrl = museum.url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
+                // Create header
+                const header = document.createElement('div');
+                header.className = 'iframe-header';
+                let headerText = `🎨 Museum Search Results: "${searchTerm}" (${iframeMuseums.length} shown below`;
+                if (tabMuseums.length > 0) {
+                    headerText += `, ${tabMuseums.length} opened in tabs`;
+                }
+                headerText += ')';
                 
-                const item = document.createElement('div');
-                item.className = 'iframe-item';
-                
-                item.innerHTML = `
-                    <div class="iframe-item-header">
-                        <span>${museum.name} - ${museum.category}</span>
-                        <a href="${searchUrl}" target="_blank">Open in new tab ↗</a>
-                    </div>
-                    <iframe src="${searchUrl}" loading="lazy"></iframe>
+                header.innerHTML = `
+                    <h2>${headerText}</h2>
+                    <button class="close-iframes" onclick="closeIframes()">✕ Close</button>
                 `;
-                
-                grid.appendChild(item);
-            });
+                container.appendChild(header);
 
-            container.appendChild(grid);
-            document.body.appendChild(container);
+                // Create grid
+                const grid = document.createElement('div');
+                grid.className = 'iframe-grid';
 
-            let statusMsg = `Loaded ${iframeMuseums.length} museum${iframeMuseums.length !== 1 ? 's' : ''} in one page`;
-            if (tabMuseums.length > 0) {
-                statusMsg += ` and opened ${tabMuseums.length} in separate tabs`;
+                iframeMuseums.forEach(museum => {
+                    const searchUrl = museum.url.replace(/SEARCH/g, encodeURIComponent(searchTerm));
+                    
+                    const item = document.createElement('div');
+                    item.className = 'iframe-item';
+                    
+                    item.innerHTML = `
+                        <div class="iframe-item-header">
+                            <span>${museum.name} - ${museum.category}</span>
+                            <a href="${searchUrl}" target="_blank">Open in new tab ↗</a>
+                        </div>
+                        <iframe src="${searchUrl}" loading="lazy"></iframe>
+                    `;
+                    
+                    grid.appendChild(item);
+                });
+
+                container.appendChild(grid);
+                document.body.appendChild(container);
             }
-            showStatus(statusMsg + '!', 'success');
+
+            // Show status message
+            let statusMsg = '';
+            if (iframeMuseums.length > 0 && tabMuseums.length > 0) {
+                statusMsg = `Loaded ${iframeMuseums.length} museum${iframeMuseums.length !== 1 ? 's' : ''} in one page and opened ${tabMuseums.length} in separate tabs!`;
+            } else if (iframeMuseums.length > 0) {
+                statusMsg = `Loaded ${iframeMuseums.length} museum${iframeMuseums.length !== 1 ? 's' : ''} in one page!`;
+            } else {
+                statusMsg = `Opened ${tabMuseums.length} museum${tabMuseums.length !== 1 ? 's' : ''} in new tabs (none support iframe embedding)`;
+            }
+            showStatus(statusMsg, 'success');
         }
 
         function closeIframes() {
