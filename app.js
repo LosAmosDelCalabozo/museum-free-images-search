@@ -721,6 +721,3 @@ loadDisplayMode();
 loadActiveTab();
 searchInput.focus();
 searchInput.select();
-    </script>
-</body>
-</html>
