@@ -382,6 +382,48 @@ button:disabled {
     font-size: 0.85em;
 }
 
+.footer-count {
+    margin-bottom: 20px;
+}
+
+.footer-credits {
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 10px;
+}
+
+.credits-title {
+    font-family: 'Amarante', serif;
+    font-size: 1.1em;
+    color: #667eea;
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.credits-links {
+    font-size: 0.9em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.credits-links a {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.credits-links a:hover {
+    color: #667eea;
+}
+
+.credits-links .separator {
+    color: #ddd;
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 30px 20px;
