@@ -161,6 +161,86 @@
             transform: none;
         }
 
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            position: relative;
+            background: transparent;
+            color: #666;
+            border: none;
+            border-radius: 0;
+            padding: 12px 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .tab-btn:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .tab-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            background: #333;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            width: 300px;
+            text-align: left;
+            line-height: 1.4;
+            z-index: 1000;
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none;
+            font-weight: normal;
+        }
+
+        .tab-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #333;
+        }
+
+        .tab-btn:hover .tab-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         .info {
             background: #f8f9ff;
             border-left: 4px solid #667eea;
@@ -191,6 +271,7 @@
         .select-buttons {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .select-btn {
@@ -283,26 +364,6 @@
             flex: 1;
         }
 
-        .museum-list {
-            list-style: none;
-            font-size: 0.85em;
-            color: #555;
-            line-height: 1.6;
-            columns: 2;
-            column-gap: 20px;
-        }
-
-        .museum-list li {
-            margin-bottom: 5px;
-            break-inside: avoid;
-        }
-
-        .museum-list li:before {
-            content: "→ ";
-            color: #667eea;
-            font-weight: bold;
-        }
-
         .footer {
             text-align: center;
             margin-top: 30px;
@@ -323,12 +384,23 @@
                 flex-direction: column;
             }
 
-            .museum-list {
-                columns: 1;
-            }
-
             .museum-checkboxes {
                 grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                border-bottom: 1px solid #e0e0e0;
+                margin-bottom: 0;
+                text-align: left;
+            }
+
+            .tab-btn.active {
+                border-left: 3px solid #667eea;
+                border-bottom: 1px solid #e0e0e0;
             }
         }
 
@@ -383,8 +455,8 @@
         .iframe-header.collapsed {
             padding: 8px 20px;
             justify-content: flex-end;
-            background: #fff0;
-            border-bottom: 0px solid #667eea;
+            background: transparent;
+            border-bottom: none;
         }
 
         .iframe-header.collapsed h2 {
@@ -465,7 +537,7 @@
 <body>
     <div class="container">
         <h1>🎨 Museum Search Portal</h1>
-        <p class="subtitle">Search across 25+ major art museums worldwide</p>
+        <p class="subtitle">Search across 60+ museum collections worldwide</p>
 
         <div class="search-box">
             <input 
@@ -491,22 +563,45 @@
 
         <div id="status" class="status"></div>
 
-        <div class="info">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="public-domain">Public Domain</button>
+            <button class="tab-btn" data-tab="restricted">
+                Free Use with Restrictions ⓘ
+                <span class="tab-tooltip">These collections allow free use with certain restrictions, such as non-commercial use only, attribution requirements, or educational purposes. Always check the specific license terms for each artwork before use.</span>
+            </button>
+        </div>
+
+        <div class="info tab-content active" id="public-domain-content">
             <div class="info-header">
-                <h3>Select Museums to Search</h3>
+                <h3>Public Domain Collections</h3>
                 <div class="select-buttons">
                     <button id="selectAllBtn" class="select-btn">Select All</button>
                     <button id="selectNoneBtn" class="select-btn">Select None</button>
-                    <button id="selectIframeBtn" class="select-btn">Select Single-Page View Only</button>
+                    <button id="selectIframeBtn" class="select-btn">Single-Page View Only</button>
+                    <button id="selectPublicOnlyBtn" class="select-btn">Public Domain Only</button>
                 </div>
             </div>
             <div class="museum-checkboxes" id="museumCheckboxes">
-                <!-- Checkboxes will be dynamically generated here -->
+                <!-- Public domain checkboxes will be generated here -->
+            </div>
+        </div>
+
+        <div class="info tab-content" id="restricted-content">
+            <div class="info-header">
+                <h3>Restricted Use Collections</h3>
+                <div class="select-buttons">
+                    <button id="selectAllRestrictedBtn" class="select-btn">Select All</button>
+                    <button id="selectNoneRestrictedBtn" class="select-btn">Select None</button>
+                    <button id="selectRestrictedOnlyBtn" class="select-btn">Restricted Only</button>
+                </div>
+            </div>
+            <div class="museum-checkboxes" id="restrictedCheckboxes">
+                <!-- Restricted checkboxes will be generated here -->
             </div>
         </div>
 
         <div class="footer">
-            <span id="tabCount">25 tabs selected</span> • Allow pop-ups if prompted
+            <span id="tabCount">60 sources selected</span> • Allow pop-ups if prompted
         </div>
     </div>
 
@@ -532,7 +627,8 @@
             'collections.britishart.yale.edu',
             'collections.tepapa.govt.nz',
             'collections.lacma.org',
-            'commons.wikimedia.org'
+            'commons.wikimedia.org',
+            'museodelprado.es'
         ];
 
         // Check if a URL can be iframed
@@ -540,30 +636,39 @@
             return !noIframeHosts.some(host => url.includes(host));
         }
 
-        const museumGroups = {
+        const publicDomainGroups = {
             'Paintings': [
-                { name: 'Art Institute of Chicago', url: 'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting&is_public_domain=1' },
+                { name: 'Art Institute of Chicago (PD)', url: 'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting&is_public_domain=1' },
+                { name: 'Art Institute of Chicago (All)', url: 'https://www.artic.edu/collection?q=SEARCH&artwork_type_id=Painting' },
                 { name: 'Barnes Foundation', url: 'https://collection.barnesfoundation.org/objects/?qtype=filter&qval={%22search%22:%22SEARCH%22,%22advancedFilters%22:{%22Artist%22:{},%22Copyright%22:{%22Public%20Domain%22:{%22filterType%22:%22Copyright%22,%22value%22:%22Public%20Domain%22,%22term%22:%22Public%20Domain%22,%22index%22:1,%22indexes%22:[4,7,8,10]}},%22Room%22:{},%22Classification%22:{},%22Year%22:{},%22Culture%22:{},%22Category%22:{%22Drawings%22:{%22filterType%22:%22Category%22,%22value%22:%22Drawings%22,%22term%22:%22Drawings%22,%22index%22:2},%22Prints%22:{%22filterType%22:%22Category%22,%22value%22:%22Prints%22,%22term%22:%22Prints%22,%22index%22:3},%22Paintings%22:{%22filterType%22:%22Category%22,%22value%22:%22Paintings%22,%22term%22:%22Paintings%22,%22index%22:4}}}}' },
-                { name: 'Belvedere Museum', url: 'https://sammlung.belvedere.at/search/SEARCH?openContentProgramFilter=true&filter=name%3AGem%C3%A4lde%3Bopencontentprogram%3Atrue#filters' },
+                { name: 'Belvedere Museum (PD)', url: 'https://sammlung.belvedere.at/search/SEARCH?openContentProgramFilter=true&filter=name%3AGem%C3%A4lde%3Bopencontentprogram%3Atrue#filters' },
+                { name: 'Belvedere Museum (All)', url: 'https://sammlung.belvedere.at/search/SEARCH?filter=name%3AGem%C3%A4lde' },
                 { name: 'Clark Art Institute', url: 'https://www.clarkart.edu/museum/collections/browse-collections#/?text=SEARCH&collectionIds=100,94,97,93,101' },
-                { name: 'Finnish National Gallery', url: 'https://www.kansallisgalleria.fi/en/search?categories[]=artwork&copyrightFree=true&searchTerms[]=SEARCH' },
+                { name: 'Finnish National Gallery (PD)', url: 'https://www.kansallisgalleria.fi/en/search?categories[]=artwork&copyrightFree=true&searchTerms[]=SEARCH' },
+                { name: 'Finnish National Gallery (All)', url: 'https://www.kansallisgalleria.fi/en/search?categories[]=artwork&searchTerms[]=SEARCH' },
                 { name: 'Harvard Art Museums', url: 'https://harvardartmuseums.org/collections?q=SEARCH&worktype%5B%5D=127&load_amount=100&offset=0' },
                 { name: 'KMSKA (Antwerp)', url: 'https://kmska.be/en/overview/the-collection?type=1448&type=1449&type=1445&type=1461&type=1446&type=1465&type=1858&search=SEARCH' },
-                { name: 'Metropolitan Museum', url: 'https://www.metmuseum.org/art/collection/search?q=SEARCH&offset=0&searchField=Title&material=Paintings&showOnly=openAccess' },
-                { name: 'National Gallery of Art', url: 'https://www.nga.gov/artwork-search?keywords=SEARCH&download=1&f[]=awtype:107231&f[]=awtype:105956' },
+                { name: 'Metropolitan Museum (PD)', url: 'https://www.metmuseum.org/art/collection/search?q=SEARCH&offset=0&searchField=Title&material=Paintings&showOnly=openAccess' },
+                { name: 'Metropolitan Museum (All)', url: 'https://www.metmuseum.org/art/collection/search?q=SEARCH&offset=0&searchField=Title&material=Paintings' },
+                { name: 'National Gallery of Art (PD)', url: 'https://www.nga.gov/artwork-search?keywords=SEARCH&download=1&f[]=awtype:107231&f[]=awtype:105956' },
+                { name: 'National Gallery of Art (All)', url: 'https://www.nga.gov/artwork-search?keywords=SEARCH&f[]=awtype:107231&f[]=awtype:105956' },
                 { name: 'National Museum in Krakow', url: 'https://zbiory.mnk.pl/en/search-result?phrase=SEARCH&filter=JTdCJTIydHlwZXMlMjI6JTdCJTIybmFtZSUyMjolMjJ0eXBlcyUyMiwlMjJ2YWx1ZSUyMjolNUIlN0IlMjJpZCUyMjoxMTM5MTMsJTIybmFtZSUyMjolMjJwYWludGluZyUyMiU3RCU1RCwlMjJkZXNjJTIyOm51bGwsJTIyYWN0aXZlJTIyOnRydWUlN0QlN0Q%3D' },
                 { name: 'National Museum in Warsaw', url: 'https://cyfrowe.mnw.art.pl/en/catalog?filter=JTdCJTIyc2VhcmNoVHlwZSUyMjolN0IlMjJuYW1lJTIyOiUyMnNlYXJjaFR5cGUlMjIsJTIydmFsdWUlMjI6JTIybmFtZSUyMiwlMjJkZXNjJTIyOiUyMmNhdGFsb2cucmFkaW8tc2VhcmNoLm9iamVjdC1uYW1lJTIyLCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMnR5cGVzJTIyOiU3QiUyMm5hbWUlMjI6JTIydHlwZXMlMjIsJTIydmFsdWUlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE3MDA4JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIycGFpbnRpbmclMjAoMjQpJTIyLCUyMnRpdGxlJTIyOiUyMnBhaW50aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LWxocDMtMTE3MDA4JTIyJTdEJTVELCUyMmRlc2MlMjI6JTVCJTdCJTIyaWQlMjI6JTIyMTE3MDA4JTIyLCUyMmVsZW1lbnQlMjI6JTdCJTdELCUyMmRpc2FibGVkJTIyOmZhbHNlLCUyMnNlbGVjdGVkJTIyOmZhbHNlLCUyMnRleHQlMjI6JTIycGFpbnRpbmclMjAoMjQpJTIyLCUyMnRpdGxlJTIyOiUyMnBhaW50aW5nJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLWdtNzktcmVzdWx0LWxocDMtMTE3MDA4JTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdELCUyMmNvcHlyaWdodHMlMjI6JTdCJTIybmFtZSUyMjolMjJjb3B5cmlnaHRzJTIyLCUyMnZhbHVlJTIyOiU1QiU3QiUyMmlkJTIyOiUyMjUwMCUyMiwlMjJlbGVtZW50JTIyOiU3QiU3RCwlMjJkaXNhYmxlZCUyMjpmYWxzZSwlMjJzZWxlY3RlZCUyMjpmYWxzZSwlMjJ0ZXh0JTIyOiUyMlB1YmxpYyUyMGRvbWFpbiUyMiwlMjJ0aXRsZSUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIyX3Jlc3VsdElkJTIyOiUyMnNlbGVjdDItNmk3Zi1yZXN1bHQtNnV1ay01MDAlMjIlN0QlNUQsJTIyZGVzYyUyMjolNUIlN0IlMjJpZCUyMjolMjI1MDAlMjIsJTIyZWxlbWVudCUyMjolN0IlN0QsJTIyZGlzYWJsZWQlMjI6ZmFsc2UsJTIyc2VsZWN0ZWQlMjI6ZmFsc2UsJTIydGV4dCUyMjolMjJQdWJsaWMlMjBkb21haW4lMjIsJTIydGl0bGUlMjI6JTIyUHVibGljJTIwZG9tYWluJTIyLCUyMl9yZXN1bHRJZCUyMjolMjJzZWxlY3QyLTZpN2YtcmVzdWx0LTZ1dWstNTAwJTIyJTdEJTVELCUyMmFjdGl2ZSUyMjp0cnVlJTdEJTdE&phrase=SEARCH' },
                 { name: 'National Museum of Norway', url: 'https://www.nasjonalmuseet.no/en/collection/search/?query=SEARCH&object-name=painting' },
                 { name: 'Newfields Museum', url: 'https://collections.discovernewfields.org/search?showOnly=is_public_domain&object_types.keyword=paintings&searchTerm=SEARCH&section=artworks' },
                 { name: 'NYPL - Paintings', url: 'https://digitalcollections.nypl.org/search/index?q=SEARCH&filters=%5Bgenre%3DPaintings%5D%5Brights%3DpublicDomain%5D' },
-                { name: 'Paris Museums', url: 'https://www.parismuseescollections.paris.fr/fr/denomination/peinture?keywords=SEARCH&limit=300&sort=score' },
+                { name: 'Paris Museums (All)', url: 'https://www.parismuseescollections.paris.fr/fr/denomination/peinture?keywords=SEARCH&limit=300&sort=score' },
                 { name: 'Rijksmuseum', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity&facets[0].id=a8ea7a0fd82263755305737ecfad87b4&facets[0].nodeRelationType=HasObjectType' },
-                { name: 'Saint Louis Art Museum', url: 'https://www.slam.org/collection/objects/?se=SEARCH&show_on_view=false&featured_objects=false&public_domain=true&recent_acquisitions=false&outdoors=false&object_classifications=paintings' },
+                { name: 'Saint Louis Art Museum (PD)', url: 'https://www.slam.org/collection/objects/?se=SEARCH&show_on_view=false&featured_objects=false&public_domain=true&recent_acquisitions=false&outdoors=false&object_classifications=paintings' },
+                { name: 'Saint Louis Art Museum (All)', url: 'https://www.slam.org/collection/objects/?se=SEARCH&show_on_view=false&featured_objects=false&recent_acquisitions=false&outdoors=false&object_classifications=paintings' },
                 { name: 'Smithsonian', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type:%22Paintings%22' },
                 { name: 'SMK (National Gallery of Denmark)', url: 'https://open.smk.dk/en/art/advanced/object_names?q=SEARCH&page=0&filters=public_domain%3Atrue%7Chas_image%3Atrue%7Cobject_names%3Apainting' },
-                { name: 'Städel Museum', url: 'https://sammlung.staedelmuseum.de/en/search?q=SEARCH&f=+object:term(48)|object:term(2607)&flags=allScopes,downloadable' },
-                { name: 'Web umenia', url: 'https://www.webumenia.sk/en/katalog?filter%5Bis_free%5D=true&filter%5Bhas_image%5D=true&q=SEARCH' },
-                { name: 'Yale University Art Gallery', url: 'https://artgallery.yale.edu/collection?query=SEARCH&f%5B0%5D=classification%3APaintings&f%5B1%5D=open_access%3A1' }
+                { name: 'Städel Museum (PD)', url: 'https://sammlung.staedelmuseum.de/en/search?q=SEARCH&f=+object:term(48)|object:term(2607)&flags=allScopes,downloadable' },
+                { name: 'Städel Museum (All)', url: 'https://sammlung.staedelmuseum.de/en/search?q=SEARCH&f=+object:term(48)|object:term(2607)' },
+                { name: 'Web umenia (PD)', url: 'https://www.webumenia.sk/en/katalog?filter%5Bis_free%5D=true&filter%5Bhas_image%5D=true&q=SEARCH' },
+                { name: 'Web umenia (All)', url: 'https://www.webumenia.sk/en/katalog?filter%5Bhas_image%5D=true&q=SEARCH' },
+                { name: 'Yale University Art Gallery (PD)', url: 'https://artgallery.yale.edu/collection?query=SEARCH&f%5B0%5D=classification%3APaintings&f%5B1%5D=open_access%3A1' },
+                { name: 'Yale University Art Gallery (All)', url: 'https://artgallery.yale.edu/collection?query=SEARCH&f%5B0%5D=classification%3APaintings&f%5B1%5D=image_availability%3A1' }
             ],
             'Drawings': [
                 { name: 'Harvard Art Museums', url: 'https://harvardartmuseums.org/collections?q=SEARCH&worktype%5B%5D=251&load_amount=100&offset=0' },
@@ -584,31 +689,45 @@
             'Illustrations & Graphic Arts': [
                 { name: 'National Museum in Krakow', url: 'https://zbiory.mnk.pl/en/search-result?phrase=SEARCH&filter=JTdCJTIydHlwZXMlMjI6JTdCJTIybmFtZSUyMjolMjJ0eXBlcyUyMiwlMjJ2YWx1ZSUyMjolNUIlN0IlMjJpZCUyMjo5OTk5NywlMjJuYW1lJTIyOiUyMmlsbHVzdHJhdGlvbnMlMjAobGF5b3V0JTIwZmVhdHVyZXMpJTIyJTdEJTVELCUyMmRlc2MlMjI6bnVsbCwlMjJhY3RpdmUlMjI6dHJ1ZSU3RCU3RA%3D%3D&limit=40' },
                 { name: 'NYPL - Illustrations', url: 'https://digitalcollections.nypl.org/search/index?q=SEARCH&filters=%5Brights%3DpublicDomain%5D%5Bgenre%3DIllustrations%5D' },
-                { name: 'Paris Museums', url: 'https://www.parismuseescollections.paris.fr/fr/recherche/denominations/arts%20graphiques-166293/image-libre/1?keywords=SEARCH&limit=300&sort=score' },
+                { name: 'Paris Museums (All)', url: 'https://www.parismuseescollections.paris.fr/fr/recherche/denominations/arts%20graphiques-166293?keywords=SEARCH&limit=300&sort=score' },
                 { name: 'Smithsonian', url: 'https://www.si.edu/search/images?edan_q=SEARCH&edan_fq[]=media_usage:CC0&edan_fq[]=object_type%3A%22Graphic+arts%22' }
             ],
             'Mixed Collections': [
                 { name: 'Cleveland Museum of Art', url: 'https://www.clevelandart.org/art/collection/search?search=SEARCH&limit_by=&cc0=1' },
-                { name: 'Europeana - 3D', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%223D%22&query=SEARCH%20&reusability=open&view=grid' },
-                { name: 'Europeana - Images', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%22IMAGE%22&query=SEARCH%20&reusability=open&view=grid' },
+                { name: 'Europeana - 3D (PD)', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%223D%22&query=SEARCH%20&reusability=open&view=grid' },
+                { name: 'Europeana - 3D (All)', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%223D%22&query=SEARCH%20&view=grid' },
+                { name: 'Europeana - Images (PD)', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%22IMAGE%22&query=SEARCH%20&reusability=open&view=grid' },
+                { name: 'Europeana - Images (All)', url: 'https://www.europeana.eu/en/search?page=1&qf=TYPE%3A%22IMAGE%22&query=SEARCH%20&view=grid' },
                 { name: 'Gallerix.org (Google Images)', url: 'https://www.google.com/search?q=intitle%3ASEARCH+site%3Ahttps%3A%2F%2Fgallerix.org&tbm=isch' },
-                { name: 'Getty Museum', url: 'https://search.getty.edu/gateway/search?q=SEARCH&cat=type&f=%22Drawings%22&types=%22Paintings%22&highlights=%22Open%20Content%20Images%22&rows=50&srt=&dir=s&dsp=0&img=1&pg=1' },
-                { name: 'LACMA', url: 'https://collections.lacma.org/search/site/SEARCH?f%5B0%5D=bm_field_has_image%3Atrue&f%5B1%5D=im_field_classification%3A22' },
+                { name: 'Getty Museum (PD)', url: 'https://search.getty.edu/gateway/search?q=SEARCH&cat=type&f=%22Drawings%22&types=%22Paintings%22&highlights=%22Open%20Content%20Images%22&rows=50&srt=&dir=s&dsp=0&img=1&pg=1' },
+                { name: 'Getty Museum (All)', url: 'https://search.getty.edu/gateway/search?q=SEARCH&cat=type&f=%22Drawings%22&types=%22Paintings%22&rows=50&srt=&dir=s&dsp=0&img=1&pg=1' },
+                { name: 'LACMA (All)', url: 'https://collections.lacma.org/search/site/SEARCH?f%5B0%5D=bm_field_has_image%3Atrue' },
                 { name: 'Rijksmuseum - All Art', url: 'https://www.rijksmuseum.nl/en/collection/search?query=SEARCH&collectionSearchContext=Art&page=1&sortingType=Popularity' },
                 { name: 'Te Papa Museum', url: 'https://collections.tepapa.govt.nz/search/SEARCH/results?wi=false&wdi=true&q=SEARCH&page=1&t=null&ir=Unrestricted&c=RareBooks' },
-                { name: 'Walters Art Museum', url: 'https://art.thewalters.org/search/?era-to=bce&era-from=bce&q=SEARCH&q-scope=everything&medium%5B%5D=17' },
-                { name: 'Wikimedia Commons', url: 'https://commons.wikimedia.org/w/index.php?search=SEARCH&title=Special%3AMediaSearch&type=image&fileres=%3E1000&haslicense=unrestricted' },
-                { name: 'Yale British Art Center', url: 'https://collections.britishart.yale.edu/?search_field=simple_search&doc-types=objects&q=SEARCH' }
+                { name: 'Walters Art Museum (All)', url: 'https://art.thewalters.org/search/?q=SEARCH&q-scope=everything' },
+                { name: 'Wikimedia Commons (PD)', url: 'https://commons.wikimedia.org/w/index.php?search=SEARCH&title=Special%3AMediaSearch&type=image&fileres=%3E1000&haslicense=unrestricted' },
+                { name: 'Yale British Art Center (All)', url: 'https://collections.britishart.yale.edu/?search_field=simple_search&doc-types=objects&q=SEARCH' }
+            ]
+        };
+
+        const restrictedUseGroups = {
+            'All Artworks': [
+                { name: 'Museo del Prado', url: 'https://www.museodelprado.es/en/the-collection/art-works?searchObras=SEARCH' },
+                { name: 'Wikimedia Commons (All)', url: 'https://commons.wikimedia.org/w/index.php?search=SEARCH&title=Special%3AMediaSearch&type=image&fileres=%3E1000' }
             ]
         };
 
         const STORAGE_KEY = 'museumSearchTerm';
-        const SELECTED_KEY = 'museumSelectedURLs';
+        const PUBLIC_SELECTED_KEY = 'publicSelectedURLs';
+        const RESTRICTED_SELECTED_KEY = 'restrictedSelectedURLs';
         const DISPLAY_MODE_KEY = 'museumDisplayMode';
+        const ACTIVE_TAB_KEY = 'activeTab';
+        
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
         const statusDiv = document.getElementById('status');
-        const checkboxContainer = document.getElementById('museumCheckboxes');
+        const publicCheckboxContainer = document.getElementById('museumCheckboxes');
+        const restrictedCheckboxContainer = document.getElementById('restrictedCheckboxes');
         const tabCountSpan = document.getElementById('tabCount');
 
         // Icon mapping for categories
@@ -617,20 +736,49 @@
             'Drawings': '✏️',
             'Prints': '🖨️',
             'Illustrations & Graphic Arts': '🎨',
-            'Mixed Collections': '🏛️'
+            'Mixed Collections': '🏛️',
+            'All Artworks': '📚'
         };
 
         // Flatten museums for easier indexing
-        let allMuseums = [];
-        Object.keys(museumGroups).forEach(category => {
-            museumGroups[category].forEach(museum => {
-                allMuseums.push({ ...museum, category });
+        let allPublicMuseums = [];
+        Object.keys(publicDomainGroups).forEach(category => {
+            publicDomainGroups[category].forEach(museum => {
+                allPublicMuseums.push({ ...museum, category, type: 'public' });
+            });
+        });
+
+        let allRestrictedMuseums = [];
+        Object.keys(restrictedUseGroups).forEach(category => {
+            restrictedUseGroups[category].forEach(museum => {
+                allRestrictedMuseums.push({ ...museum, category, type: 'restricted' });
+            });
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                
+                // Update buttons
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`${tab}-content`).classList.add('active');
+                
+                // Save active tab
+                localStorage.setItem(ACTIVE_TAB_KEY, tab);
+                
+                // Update count
+                updateTabCount();
             });
         });
 
         // Generate checkboxes grouped by category
-        function generateCheckboxes() {
-            Object.keys(museumGroups).forEach(category => {
+        function generateCheckboxes(groups, container, allMuseums, storageKey, type) {
+            Object.keys(groups).forEach(category => {
                 // Create category header with checkbox
                 const categoryHeader = document.createElement('div');
                 categoryHeader.className = 'category-header';
@@ -638,9 +786,9 @@
                 const categoryCheckbox = document.createElement('input');
                 categoryCheckbox.type = 'checkbox';
                 categoryCheckbox.className = 'category-checkbox';
-                categoryCheckbox.id = `category-${category}`;
+                categoryCheckbox.id = `category-${type}-${category}`;
                 categoryCheckbox.checked = true;
-                categoryCheckbox.addEventListener('change', (e) => toggleCategory(category, e.target.checked));
+                categoryCheckbox.addEventListener('change', (e) => toggleCategory(category, e.target.checked, type));
                 
                 const categoryTitle = document.createElement('span');
                 categoryTitle.className = 'category-title';
@@ -648,10 +796,10 @@
                 
                 categoryHeader.appendChild(categoryCheckbox);
                 categoryHeader.appendChild(categoryTitle);
-                checkboxContainer.appendChild(categoryHeader);
+                container.appendChild(categoryHeader);
 
                 // Create museums in this category
-                museumGroups[category].forEach(museum => {
+                groups[category].forEach(museum => {
                     const globalIndex = allMuseums.findIndex(
                         m => m.name === museum.name && m.url === museum.url
                     );
@@ -659,18 +807,19 @@
                     const div = document.createElement('div');
                     div.className = 'museum-checkbox-item';
                     div.dataset.category = category;
+                    div.dataset.type = type;
                     
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
-                    checkbox.id = `museum-${globalIndex}`;
-                    checkbox.checked = true; // All checked by default
+                    checkbox.id = `museum-${type}-${globalIndex}`;
+                    checkbox.checked = true;
                     checkbox.addEventListener('change', () => {
                         updateTabCount();
-                        updateCategoryCheckbox(category);
+                        updateCategoryCheckbox(category, type);
                     });
                     
                     const label = document.createElement('label');
-                    label.htmlFor = `museum-${globalIndex}`;
+                    label.htmlFor = `museum-${type}-${globalIndex}`;
                     label.textContent = museum.name;
                     
                     // Add indicator if it can't be iframed
@@ -685,18 +834,18 @@
                     
                     div.appendChild(checkbox);
                     div.appendChild(label);
-                    checkboxContainer.appendChild(div);
+                    container.appendChild(div);
                 });
             });
             
             // Load saved selections
-            loadSelectedMuseums();
+            loadSelectedMuseums(allMuseums, storageKey, type);
             updateTabCount();
         }
 
         // Toggle all museums in a category
-        function toggleCategory(category, checked) {
-            const items = document.querySelectorAll(`.museum-checkbox-item[data-category="${category}"]`);
+        function toggleCategory(category, checked, type) {
+            const items = document.querySelectorAll(`.museum-checkbox-item[data-category="${category}"][data-type="${type}"]`);
             items.forEach(item => {
                 const checkbox = item.querySelector('input[type="checkbox"]');
                 if (checkbox) {
@@ -707,9 +856,9 @@
         }
 
         // Update category checkbox based on individual museum checkboxes
-        function updateCategoryCheckbox(category) {
-            const items = document.querySelectorAll(`.museum-checkbox-item[data-category="${category}"] input[type="checkbox"]`);
-            const categoryCheckbox = document.getElementById(`category-${category}`);
+        function updateCategoryCheckbox(category, type) {
+            const items = document.querySelectorAll(`.museum-checkbox-item[data-category="${category}"][data-type="${type}"] input[type="checkbox"]`);
+            const categoryCheckbox = document.getElementById(`category-${type}-${category}`);
             
             if (categoryCheckbox) {
                 const allChecked = Array.from(items).every(cb => cb.checked);
@@ -722,18 +871,23 @@
 
         // Update tab count display
         function updateTabCount() {
-            const selectedCount = getSelectedMuseums().length;
-            tabCountSpan.textContent = `${selectedCount} tab${selectedCount !== 1 ? 's' : ''} selected`;
+            const publicCount = getSelectedMuseums('public').length;
+            const restrictedCount = getSelectedMuseums('restricted').length;
+            const totalCount = publicCount + restrictedCount;
+            
+            tabCountSpan.textContent = `${totalCount} source${totalCount !== 1 ? 's' : ''} selected (${publicCount} PD, ${restrictedCount} restricted)`;
             
             // Save selections
-            saveSelectedMuseums();
+            saveSelectedMuseums(allPublicMuseums, PUBLIC_SELECTED_KEY, 'public');
+            saveSelectedMuseums(allRestrictedMuseums, RESTRICTED_SELECTED_KEY, 'restricted');
         }
 
         // Get selected museums
-        function getSelectedMuseums() {
+        function getSelectedMuseums(type) {
             const selected = [];
-            allMuseums.forEach((museum, index) => {
-                const checkbox = document.getElementById(`museum-${index}`);
+            const museums = type === 'public' ? allPublicMuseums : allRestrictedMuseums;
+            museums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-${type}-${index}`);
                 if (checkbox && checkbox.checked) {
                     selected.push(museum);
                 }
@@ -742,25 +896,25 @@
         }
 
         // Save selected museums to localStorage
-        function saveSelectedMuseums() {
+        function saveSelectedMuseums(allMuseums, storageKey, type) {
             const selectedIndices = [];
             allMuseums.forEach((museum, index) => {
-                const checkbox = document.getElementById(`museum-${index}`);
+                const checkbox = document.getElementById(`museum-${type}-${index}`);
                 if (checkbox && checkbox.checked) {
                     selectedIndices.push(index);
                 }
             });
-            localStorage.setItem(SELECTED_KEY, JSON.stringify(selectedIndices));
+            localStorage.setItem(storageKey, JSON.stringify(selectedIndices));
         }
 
         // Load selected museums from localStorage
-        function loadSelectedMuseums() {
-            const saved = localStorage.getItem(SELECTED_KEY);
+        function loadSelectedMuseums(allMuseums, storageKey, type) {
+            const saved = localStorage.getItem(storageKey);
             if (saved) {
                 try {
                     const selectedIndices = JSON.parse(saved);
                     allMuseums.forEach((museum, index) => {
-                        const checkbox = document.getElementById(`museum-${index}`);
+                        const checkbox = document.getElementById(`museum-${type}-${index}`);
                         if (checkbox) {
                             checkbox.checked = selectedIndices.includes(index);
                         }
@@ -771,7 +925,7 @@
             }
         }
 
-        // Load last search term from localStorage on page load
+        // Load last search term from localStorage
         function loadLastSearchTerm() {
             const lastSearch = localStorage.getItem(STORAGE_KEY);
             if (lastSearch) {
@@ -800,6 +954,17 @@
             localStorage.setItem(DISPLAY_MODE_KEY, mode);
         }
 
+        // Load active tab
+        function loadActiveTab() {
+            const activeTab = localStorage.getItem(ACTIVE_TAB_KEY);
+            if (activeTab) {
+                const tabBtn = document.querySelector(`[data-tab="${activeTab}"]`);
+                if (tabBtn) {
+                    tabBtn.click();
+                }
+            }
+        }
+
         function showStatus(message, type) {
             statusDiv.textContent = message;
             statusDiv.className = `status ${type}`;
@@ -817,10 +982,12 @@
                 return;
             }
 
-            const selectedMuseums = getSelectedMuseums();
+            const publicMuseums = getSelectedMuseums('public');
+            const restrictedMuseums = getSelectedMuseums('restricted');
+            const selectedMuseums = [...publicMuseums, ...restrictedMuseums];
             
             if (selectedMuseums.length === 0) {
-                showStatus('Please select at least one museum', 'warning');
+                showStatus('Please select at least one source', 'warning');
                 return;
             }
 
@@ -831,10 +998,8 @@
             const displayMode = document.querySelector('input[name="displayMode"]:checked').value;
 
             if (displayMode === 'single') {
-                // Show all in one page with iframes
                 showInSinglePage(selectedMuseums, searchTerm);
             } else {
-                // Open in separate tabs (original behavior)
                 openInTabs(selectedMuseums, searchTerm);
             }
         }
@@ -858,12 +1023,10 @@
 
             // Show iframe-compatible museums in the single page view
             if (iframeMuseums.length > 0) {
-                // Create iframe container for compatible sites
                 const container = document.createElement('div');
                 container.className = 'iframe-container';
                 container.id = 'iframeContainer';
 
-                // Create header
                 const header = document.createElement('div');
                 header.className = 'iframe-header';
                 header.id = 'iframeHeader';
@@ -879,7 +1042,6 @@
                 `;
                 container.appendChild(header);
 
-                // Create grid
                 const grid = document.createElement('div');
                 grid.className = 'iframe-grid';
 
@@ -903,32 +1065,25 @@
                 container.appendChild(grid);
                 document.body.appendChild(container);
 
-                // Add scroll listener to collapse header
-                let lastScrollTop = 0;
                 container.addEventListener('scroll', () => {
                     const scrollTop = container.scrollTop;
                     const header = document.getElementById('iframeHeader');
                     
                     if (scrollTop > 50) {
-                        // Scrolling down - collapse
                         header.classList.add('collapsed');
                     } else if (scrollTop === 0) {
-                        // Scrolled all the way to top - expand
                         header.classList.remove('collapsed');
                     }
-                    
-                    lastScrollTop = scrollTop;
                 });
             }
 
-            // Show status message
             let statusMsg = '';
             if (iframeMuseums.length > 0 && tabMuseums.length > 0) {
-                statusMsg = `Loaded ${iframeMuseums.length} museum${iframeMuseums.length !== 1 ? 's' : ''} in one page and opened ${tabMuseums.length} in separate tabs!`;
+                statusMsg = `Loaded ${iframeMuseums.length} source${iframeMuseums.length !== 1 ? 's' : ''} in one page and opened ${tabMuseums.length} in separate tabs!`;
             } else if (iframeMuseums.length > 0) {
-                statusMsg = `Loaded ${iframeMuseums.length} museum${iframeMuseums.length !== 1 ? 's' : ''} in one page!`;
+                statusMsg = `Loaded ${iframeMuseums.length} source${iframeMuseums.length !== 1 ? 's' : ''} in one page!`;
             } else {
-                statusMsg = `Opened ${tabMuseums.length} museum${tabMuseums.length !== 1 ? 's' : ''} in new tabs (none support iframe embedding)`;
+                statusMsg = `Opened ${tabMuseums.length} source${tabMuseums.length !== 1 ? 's' : ''} in new tabs (none support iframe embedding)`;
             }
             showStatus(statusMsg, 'success');
         }
@@ -947,7 +1102,6 @@
             let opened = 0;
             let failed = 0;
             
-            // Keep refocusing on this window aggressively
             const refocusInterval = setInterval(() => {
                 window.focus();
             }, 10);
@@ -959,14 +1113,12 @@
                     
                     if (newWindow) {
                         opened++;
-                        // Force focus back immediately
                         window.focus();
                     } else {
                         failed++;
                     }
 
                     if (index === selectedMuseums.length - 1) {
-                        // Stop the aggressive refocusing
                         setTimeout(() => clearInterval(refocusInterval), 500);
                         
                         searchButton.disabled = false;
@@ -975,10 +1127,10 @@
                         if (failed > 0) {
                             showStatus(`Opened ${opened} tabs. ${failed} blocked - please allow pop-ups and try again.`, 'warning');
                         } else {
-                            showStatus(`Successfully opened ${opened} museum search tabs!`, 'success');
+                            showStatus(`Successfully opened ${opened} source tabs!`, 'success');
                         }
                     }
-                }, index * 100); // Stagger tab opening by 100ms
+                }, index * 100);
             });
         }
 
@@ -997,17 +1149,14 @@
             });
         });
 
-        // Select All button
+        // Public Domain buttons
         document.getElementById('selectAllBtn').addEventListener('click', () => {
-            allMuseums.forEach((museum, index) => {
-                const checkbox = document.getElementById(`museum-${index}`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
+            allPublicMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-public-${index}`);
+                if (checkbox) checkbox.checked = true;
             });
-            // Update all category checkboxes
-            Object.keys(museumGroups).forEach(category => {
-                const categoryCheckbox = document.getElementById(`category-${category}`);
+            Object.keys(publicDomainGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-public-${category}`);
                 if (categoryCheckbox) {
                     categoryCheckbox.checked = true;
                     categoryCheckbox.indeterminate = false;
@@ -1016,17 +1165,13 @@
             updateTabCount();
         });
 
-        // Select None button
         document.getElementById('selectNoneBtn').addEventListener('click', () => {
-            allMuseums.forEach((museum, index) => {
-                const checkbox = document.getElementById(`museum-${index}`);
-                if (checkbox) {
-                    checkbox.checked = false;
-                }
+            allPublicMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-public-${index}`);
+                if (checkbox) checkbox.checked = false;
             });
-            // Update all category checkboxes
-            Object.keys(museumGroups).forEach(category => {
-                const categoryCheckbox = document.getElementById(`category-${category}`);
+            Object.keys(publicDomainGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-public-${category}`);
                 if (categoryCheckbox) {
                     categoryCheckbox.checked = false;
                     categoryCheckbox.indeterminate = false;
@@ -1035,25 +1180,116 @@
             updateTabCount();
         });
 
-        // Select Iframe-Compatible button
         document.getElementById('selectIframeBtn').addEventListener('click', () => {
-            allMuseums.forEach((museum, index) => {
-                const checkbox = document.getElementById(`museum-${index}`);
+            allPublicMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-public-${index}`);
                 if (checkbox) {
                     checkbox.checked = canBeIframed(museum.url);
                 }
             });
-            // Update all category checkboxes
-            Object.keys(museumGroups).forEach(category => {
-                updateCategoryCheckbox(category);
+            Object.keys(publicDomainGroups).forEach(category => {
+                updateCategoryCheckbox(category, 'public');
             });
             updateTabCount();
         });
 
+        document.getElementById('selectPublicOnlyBtn').addEventListener('click', () => {
+            // Uncheck all restricted
+            allRestrictedMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-restricted-${index}`);
+                if (checkbox) checkbox.checked = false;
+            });
+            Object.keys(restrictedUseGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-restricted-${category}`);
+                if (categoryCheckbox) {
+                    categoryCheckbox.checked = false;
+                    categoryCheckbox.indeterminate = false;
+                }
+            });
+            
+            // Check all public
+            allPublicMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-public-${index}`);
+                if (checkbox) checkbox.checked = true;
+            });
+            Object.keys(publicDomainGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-public-${category}`);
+                if (categoryCheckbox) {
+                    categoryCheckbox.checked = true;
+                    categoryCheckbox.indeterminate = false;
+                }
+            });
+            
+            updateTabCount();
+        });
+
+        // Restricted buttons
+        document.getElementById('selectAllRestrictedBtn').addEventListener('click', () => {
+            allRestrictedMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-restricted-${index}`);
+                if (checkbox) checkbox.checked = true;
+            });
+            Object.keys(restrictedUseGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-restricted-${category}`);
+                if (categoryCheckbox) {
+                    categoryCheckbox.checked = true;
+                    categoryCheckbox.indeterminate = false;
+                }
+            });
+            updateTabCount();
+        });
+
+        document.getElementById('selectNoneRestrictedBtn').addEventListener('click', () => {
+            allRestrictedMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-restricted-${index}`);
+                if (checkbox) checkbox.checked = false;
+            });
+            Object.keys(restrictedUseGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-restricted-${category}`);
+                if (categoryCheckbox) {
+                    categoryCheckbox.checked = false;
+                    categoryCheckbox.indeterminate = false;
+                }
+            });
+            updateTabCount();
+        });
+
+        document.getElementById('selectRestrictedOnlyBtn').addEventListener('click', () => {
+            // Uncheck all public
+            allPublicMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-public-${index}`);
+                if (checkbox) checkbox.checked = false;
+            });
+            Object.keys(publicDomainGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-public-${category}`);
+                if (categoryCheckbox) {
+                    categoryCheckbox.checked = false;
+                    categoryCheckbox.indeterminate = false;
+                }
+            });
+            
+            // Check all restricted
+            allRestrictedMuseums.forEach((museum, index) => {
+                const checkbox = document.getElementById(`museum-restricted-${index}`);
+                if (checkbox) checkbox.checked = true;
+            });
+            Object.keys(restrictedUseGroups).forEach(category => {
+                const categoryCheckbox = document.getElementById(`category-restricted-${category}`);
+                if (categoryCheckbox) {
+                    categoryCheckbox.checked = true;
+                    categoryCheckbox.indeterminate = false;
+                }
+            });
+            
+            updateTabCount();
+        });
+
         // Initialize
-        generateCheckboxes();
+        generateCheckboxes(publicDomainGroups, publicCheckboxContainer, allPublicMuseums, PUBLIC_SELECTED_KEY, 'public');
+        generateCheckboxes(restrictedUseGroups, restrictedCheckboxContainer, allRestrictedMuseums, RESTRICTED_SELECTED_KEY, 'restricted');
         loadLastSearchTerm();
         loadDisplayMode();
+        loadActiveTab();
         searchInput.focus();
         searchInput.select();
     </script>
